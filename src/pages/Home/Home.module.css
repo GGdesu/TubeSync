@@ -1,0 +1,205 @@
+/* all */
+*{
+  margin: 0;
+  padding: 0;
+  font-family: "Open Sans", sans-serif;
+  box-sizing: border-box;
+}
+
+html{
+  line-height: 1.15;
+}
+
+/* -------------- header ---------------- */
+h1{
+  font-size: 46px;
+}
+.header{
+  background-color: #151515;
+  color: #fff;
+  height: 105px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.headerLeft{
+  display: flex;
+  align-items: center;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 42px;
+  line-height: 51px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.headerRight{
+  font-style: normal;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 34px;
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+  align-items: center;
+}
+
+.headerRight a{
+  text-decoration: none;
+  cursor: pointer;
+  color: #fff;
+}
+
+.headerRight a:hover{
+  color: #E4105D;
+}
+
+/* -------------- banner ---------------- */
+.banner{
+  background-image: linear-gradient(270deg, rgba(0, 0, 0, 0) 0%, #000000 50%), url(../../assets/banner.png);
+  background-repeat: no-repeat;
+  background-position: top right;
+  height: 683px;
+  overflow: hidden;
+}
+
+ .bannerConteudo{
+  display: flex;
+  flex-direction: column;
+  max-width: 50%;
+  margin-top: 150px;
+  margin-left: 20%;
+  color: #fff;
+} 
+
+.bannerTitulo{
+  font-size: 56px;
+}
+.bannerTitulo span{
+  background: linear-gradient(90deg, #B032FF 0%, #E41082 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bannerButton{
+  width: 15%;
+  border: 0px;
+  border-radius: 1.5rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: rgb(228, 16, 93);
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease 0s;
+  margin: 1rem;
+}
+
+.bannerButton::after {
+  content: "";
+  position: absolute;
+  left: calc(-0.35rem - 1px);
+  top: calc(-0.35rem - 1px);
+  width: calc(100% + .7rem);
+  height: calc(100% + .7rem);
+  border: 1px solid rgb(228, 16, 93);
+  border-radius: 1.5rem;
+}
+.bannerButton:hover{
+  background-color: #E4105D;
+  box-shadow: 0px 0px 48px 0px #E4105D;
+}
+
+
+/* -------------- body ---------------- */
+.body{
+  display: flex;
+  flex-direction: column;
+  height: 2500px;
+}
+
+.step{
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.container{
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-content: space-around;
+}
+/* -------------- step1 ---------------- */
+.step1{
+  color: #fff;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: #1E192C;
+  height: 500px;
+}
+
+.step1 img{
+  width: 200px;
+}
+/* -------------- step2 ---------------- */
+.step2{
+  background-color: #4c0027;
+  height: 500px;
+}
+
+.step2Left{
+  text-align: right;
+}
+/* -------------- step3 ---------------- */
+.step3{
+  background-color: #1a1a40;
+  height: 500px;
+}
+/* -------------- step4 ---------------- */
+.step4{
+  background-color: #fff;
+  height: 500px;
+  color: #000;
+}
+
+.step4Left{
+  text-align: right;
+}
+/* -------------- step5 ---------------- */
+.step5{
+  background-color: #1E192C;
+  height: 500px;
+}
+
+/* -------------- footer ---------------- */
+.footer{
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  background-color: #0D1228;
+  height: 300px;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.footerImg{
+  display: flex;
+  gap: 10px;
+}

@@ -1,0 +1,232 @@
+/* all */
+
+.app{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.hide {
+    height: 0 !important;
+}
+
+/*---------- header -------------*/
+h1{
+    font-size: 46px;
+}
+
+.header{
+    background-color: #151515;
+    color: #fff;
+    height: 105px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 10%;
+    padding-right: 3%;
+}
+
+.headerLeft{
+    display: flex;
+    align-items: center;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 51px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+  
+.headerRight{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 34px;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    align-items: center;
+}
+
+.roomSettings{
+    position: absolute;
+    right: 5%;
+    top: 105px;
+    background-color: #151515;
+    overflow: hidden;
+}
+
+.roomSettings li{
+    margin: 1rem;
+}
+.gap{
+    margin-right: 1rem;
+}
+
+.inviteSettings{
+    text-align: center;
+    position: absolute;
+    right: 0;
+    top: 105px;
+    width: 100px;
+    height: 50px;
+    background-color: #151515;
+    overflow: hidden;
+}
+
+.inviteSettings button{
+    margin: 10px;
+}
+/*---------- body -------------*/
+
+.body{
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    background-color: #1E192C;
+}
+
+/*---------- body-left -------------*/
+.bodyLeft{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.video{
+    margin: 1rem 1rem 0 1rem;
+    width: 50vw;
+    height: 60vh;
+}
+
+.search{
+    display: flex;
+    margin: .2rem 0 0 1rem;
+    width: 50vw;
+    height: 40px;
+    border-bottom-color: #FA00FF;
+    border-bottom-style: solid;
+}
+
+button{
+    background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+.search input{
+    width: 47vw;
+    margin-left: 1.5rem;
+    background-color: #1E192C;
+    color: #B6B6B6;
+}
+
+::placeholder { 
+    color: #B6B6B6;
+    font-weight: bold;
+    opacity: 1;
+  }
+
+textarea:focus, input:focus{
+    outline: none;
+}
+
+input{
+    border-style: none;
+}
+.roomInfo{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-left: 1rem;
+    bottom: 0;
+    width: 50vw;
+}
+
+.infoHeader{
+    cursor: pointer;
+    text-align: center;
+    background-color: #FA00FF;
+    color: #fff;
+    padding: 10px;
+    width: 150px;
+    border-radius: 5px 5px 0 0;
+}
+.infoBody{
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    transition: all 0.4s ease-in-out;
+    background-color: #202020;
+    width: 100%;
+    height: 14vh;
+}
+/*---------- body-right -------------*/
+
+.bodyRight{
+    display: flex;
+    flex-grow: 1;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.chat{
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+}
+
+.chatHeader{
+    cursor: pointer;
+    color: white;
+    background-color: #FA00FF;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-radius: 5px 5px 0 0;
+    height: 45px;
+    padding: 10px;
+    width: 100%;
+}
+
+.chatBody{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+    transition: all 0.4s ease-in-out;
+    height: 370px;
+    background-color: #202020;
+}
+
+.chatContainerInput{
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    transition: all 0.4s ease-in-out;
+    height: 50px;
+    background-color: #202020;
+}
+
+.chatInput{
+    display: flex;
+    justify-content: center;
+    border-radius: 30px;
+    background-color: #fff;
+    height: 35px;
+    width: 90%;
+}
+
+.chatInput input{
+    margin-right: 5px;
+    width: 265px;
+}
