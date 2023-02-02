@@ -17,6 +17,15 @@ function Home() {
     AOS.init({duration: 2000});
   })
 
+  /*Exemplo de uma requisição http ao servidor,
+  fiz para testar se tava funcionando a conexão entre o back e o front.
+  const [data, setData] = React.useState(null)
+
+  useEffect(() => {
+    fetch("/api")
+    .then((res) => res.json())
+    .then((data) => setData(data.message))
+  }, [])*/
   
   return (
     <div className={styles.app}>
