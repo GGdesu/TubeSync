@@ -1,11 +1,12 @@
 {
+  "type": "module",
   "name": "tubesync",
   "version": "1.0.0",
   "description": "Um projeto que consiste em criar um site onde o usuário pode criar uma sala e assistir vídeos do youtube com seus amigos.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server/index.js"
+    "start": "node server/app.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,8 @@
   },
   "homepage": "https://github.com/GGdesu/TubeSync#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "plyr-react": "^5.1.2",
+    "socket.io": "^4.6.0"
   }
 }
