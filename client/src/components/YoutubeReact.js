@@ -14,6 +14,9 @@ const opts = {
     },
 };
 
+function createRoom (socket){
+    socket.emit('createRoom');
+}
 function YoutubeReact({ url }) {
     // variaveis para o gerenciamento do estado do player
     const [playing, setPlaying] = useState(false)
@@ -141,8 +144,10 @@ function YoutubeReact({ url }) {
 
         newSocket.on('connect', () => {
             console.log("Client: Connect!")
+            createRoom(newSocket)
             setConnected(true)
         })
+
 
         newSocket.on('disconnect', () => {
             console.log("Client: Disconnect")
@@ -194,6 +199,10 @@ function YoutubeReact({ url }) {
                 console.log("SeekSync Resposta: ", data["seek"])
 
                 handleSeekTo(data["seek"])
+            })
+
+            socket.on('setID', (data)=> {
+                console.log(`O id da sala criada eh ${data}`)
             })
 
         }

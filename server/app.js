@@ -18,50 +18,62 @@ const io = new Server(server, {
 })
 
 //SOCKET QUE IRA CUIDAR DA SINCRONIZACAO
-const syncPlayer = io.of("/sync-player")
+const syncPlayer = io.of("/sync-player");
+
 syncPlayer.on("connection", (socket) => {
-    console.log(`client ${socket.id} connected`)
+  console.log(`client ${socket.id} connected`);
 
-    socket.on("playPauseSync", (data) => {
-        console.log("playPauseSync data: ", data)
-        socket.broadcast.emit("responsePlayPauseSync", data)
-    })
+  socket.on("playPauseSync", (data) => {
+    console.log("playPauseSync data: ", data);
+    socket.broadcast.emit("responsePlayPauseSync", data);
+  });
 
-    socket.on("seekSync", (data) => {
-        console.log("seekSync data: ", data)
-        socket.broadcast.emit("responseSeekSync", data)
-    })
-    
-    socket.on("disconnect", (reason) => {
-        console.log(`server: ${socket.id} disconnected \n${reason}`)
-    })
-})
+  socket.on("seekSync", (data) => {
+    console.log("seekSync data: ", data);
+    socket.broadcast.emit("responseSeekSync", data);
+  });
 
-/*const getDataAndEmit = (socket, response) => {
-    socket.emit("getPlaySync", response)
-}*/
-
-/*let interval
-
-io.on("connection", (socket) => {
-    console.log(`client: ${socket.id} connected`)
-    if (interval) {
-        clearInterval(interval)
+  socket.on("createRoom", () => {
+    let ID = makeID(4);
+    while (syncPlayer.adapter.rooms.has(ID)) {
+      ID = makeID(4);
     }
-    
-    interval = setInterval(() => getApiAndEmit(socket), 1000);
+    socket.join(ID);
+    socket.emit("setID", ID);
+    console.log(`room ${ID} was created`);
+  });
 
-    socket.on("disconnect", (reason) => {
-        console.log(`client: ${socket.id} disconnected \n${reason}`)
-        clearInterval(interval)
-    })
-})
+  socket.on("joinRoom", (roomID) => {
+    const room = syncPlayer.adapter.rooms.get(roomID);
+    if (!room) {
+      console.log(`room not found`);
+      return;
+    }
+    /*
+    if (room.size >= 5) {
+      // Room is already full
+      return;
+    }*/
+    socket.join(roomID);
+    const roomSize = syncPlayer.adapter.rooms.get(roomID).size;
+    syncPlayer.to(roomID).emit("roomSize", roomSize);
+    socket.emit("roomJoined", roomID, roomSize);
+  });
 
-const getApiAndEmit = socket => {
-    const response = new Date()
+  socket.on("disconnect", (reason) => {
+    console.log(`server: ${socket.id} disconnected \n${reason}`);
+  });
+});
 
-    socket.emit("FromAPI", response)
-}*/
+function makeID(length) {
+  var result = "";
+  var characters = "0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
