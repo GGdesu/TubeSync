@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import styles from '../pages/Room/Room.module.css'
 import YouTube from 'react-youtube';
 import socketIOClient from "socket.io-client"
 
@@ -6,7 +7,7 @@ const SYNCPLAYER_ENDPOINT = "http://localhost:4001/sync-player"
 
 //pre-definições do player
 const opts = {
-    height: '585',
+    height: '100%',
     width: '100%',
     playerVars: {
         autoplay: 0,
@@ -207,6 +208,7 @@ function YoutubeReact({ url }) {
             opts={opts}
             onReady={handlePlayerOnReady}
             onStateChange={onPlayerStateChange}
+            className={styles.youtube}
         />
     );
 }

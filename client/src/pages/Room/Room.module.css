@@ -100,6 +100,10 @@ h1{
     height: 60vh;
 }
 
+.youtube{
+    height: 100%;
+    width: 100%;
+}
 .search{
     display: flex;
     margin: .2rem 0 0 1rem;
