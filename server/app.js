@@ -37,6 +37,23 @@ syncPlayer.on("connection", (socket) => {
     })
 })
 
+//Chat
+const chat = io.of("/chat");
+chat.on("connection", (socket) => {
+    console.log(`client ${socket.id} connected to chat`)
+
+    socket.on("message", (data) => {
+        console.log("message data: ", data)
+        
+        const message = "user-" + socket.id.substring(0, 5) + ": " + data
+        chat.emit("responseMessage", message) 
+    })
+
+    socket.on("disconnect", (reason) => {
+        console.log(`server: ${socket.id} disconnected of chat\n${reason}`)
+    })
+})
+
 /*const getDataAndEmit = (socket, response) => {
     socket.emit("getPlaySync", response)
 }*/

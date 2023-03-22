@@ -4,13 +4,12 @@ import React, { useEffect, useState } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
 import add from '../../assets/add.png'
-import menos from '../../assets/menos.png'
-import pointer from '../../assets/pointer.png'
 import YoutubeReact from '../../components/YoutubeReact';
+import ChatClient from '../../components/Chat';
 
 
 function Room() {
-    const [isActive, setActive] = useState("false");
+    
     const [isInfo, setInfo] = useState("false");
     const [isSettings, setSettings] = useState("false");
     const [isInvite, setInvite] = useState("false");
@@ -22,11 +21,7 @@ function Room() {
     const infoToggle = () => {
         setInfo(!isInfo);
     };
-    const handleToggle = () => {
-        setActive(!isActive);
-        
-    };
-
+   
     const handleUrl = (e) => {
         e.preventDefault() 
         setUrl(inputYtUrl)
@@ -86,23 +81,7 @@ function Room() {
                     </div>
                 </div>
                 <div className={styles.bodyRight}>
-                    <div className={styles.chat}>
-                        <div className={styles.chatHeader} onClick={handleToggle}>
-                            <h3>Chat</h3>
-                            <img src={menos} alt="close" />
-                        </div>
-                        <div className={`${styles.chatBody} ${isActive ? styles.hide : ""}`}>
-                            <h3>Conversa</h3>
-                        </div>
-                        <div className={`${styles.chatContainerInput} ${isActive ? styles.hide : ""}`}>
-                            <div className={styles.chatInput}>
-                                <input type="text" placeholder="Send a message"></input>
-                                <button>
-                                    <img src={pointer} alt="send" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <ChatClient/>
                 </div>
             </div>
         </div>
