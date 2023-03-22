@@ -141,6 +141,7 @@ function YoutubeReact({ url }) {
 
         newSocket.on('connect', () => {
             console.log("Client: Connect!")
+            //console.log(newSocket)
             setConnected(true)
         })
 

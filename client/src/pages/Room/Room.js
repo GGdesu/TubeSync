@@ -1,12 +1,13 @@
 import styles from './Room.module.css'
 import { Link } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
 import add from '../../assets/add.png'
 import menos from '../../assets/menos.png'
 import pointer from '../../assets/pointer.png'
 import YoutubeReact from '../../components/YoutubeReact';
+import ytUrlHandler from '../../utils/UrlHandler';
 
 
 function Room() {
@@ -29,7 +30,12 @@ function Room() {
 
     const handleUrl = (e) => {
         e.preventDefault() 
-        setUrl(inputYtUrl)
+        if(ytUrlHandler(inputYtUrl) === ""){
+            alert("Invalid Link!")
+        }else{
+            setUrl(ytUrlHandler(inputYtUrl))
+        }
+        
     }
 
     const onChangeUrl = (e) => {

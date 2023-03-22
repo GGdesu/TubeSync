@@ -1,7 +1,6 @@
 import express from "express"
 import { createServer } from "http"
 import { Server, Socket } from "socket.io"
-import { clearInterval } from "timers"
 
 const PORT = process.env.PORT || 4001
 import router from "./routes/index.js"
@@ -37,31 +36,6 @@ syncPlayer.on("connection", (socket) => {
     })
 })
 
-/*const getDataAndEmit = (socket, response) => {
-    socket.emit("getPlaySync", response)
-}*/
-
-/*let interval
-
-io.on("connection", (socket) => {
-    console.log(`client: ${socket.id} connected`)
-    if (interval) {
-        clearInterval(interval)
-    }
-    
-    interval = setInterval(() => getApiAndEmit(socket), 1000);
-
-    socket.on("disconnect", (reason) => {
-        console.log(`client: ${socket.id} disconnected \n${reason}`)
-        clearInterval(interval)
-    })
-})
-
-const getApiAndEmit = socket => {
-    const response = new Date()
-
-    socket.emit("FromAPI", response)
-}*/
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
