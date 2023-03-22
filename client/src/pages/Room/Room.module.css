@@ -206,10 +206,11 @@ input{
     justify-content: center;
     align-items: center;
     color: #fff;
-    overflow: hidden;
+    overflow: auto;
     transition: all 0.4s ease-in-out;
     height: 370px;
     background-color: #202020;
+    flex-direction: column;
 }
 
 .chatContainerInput{
