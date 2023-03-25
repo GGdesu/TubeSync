@@ -58,6 +58,43 @@ h1{
   color: #E4105D;
 }
 
+.titulo{
+  margin-bottom: 2rem;
+}
+
+.input{
+  box-sizing: border-box;
+  width: 60%;
+  margin: 0.6rem 0;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 1px 1px 6px #0000001c;
+}
+
+.input:focus-visible{
+  outline: 1px solid #FA00FF;
+}
+
+.btn{
+  box-sizing: border-box;
+  width: 60%;
+  margin: 2.5rem 0;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  font-weight: bold;
+  background-color: #E4105D;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 1px 1px 6px #0000001c;
+}
+
+.btn:hover{
+  background-color: #FA00FF;
+  color: white;
+}
+
 /* -------------- banner ---------------- */
 .banner{
   background-image: linear-gradient(270deg, rgba(0, 0, 0, 0) 0%, #000000 50%), url(../../assets/banner.png);
