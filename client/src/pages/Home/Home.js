@@ -1,6 +1,9 @@
 import styles from './Home.module.css'
-import { Link } from 'react-router-dom';
-import React, { useContext, useEffect } from 'react'
+import Modal from '../../components/Modal'
+import { Link, useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react'
+
+
 import youtube from '../../assets/youtube.png'
 import facebook from '../../assets/facebook.png'
 import twitter from '../../assets/twitter.png'
@@ -14,8 +17,14 @@ import 'aos/dist/aos.css'
 import { SocketContext } from '../../context/Socket';
 
 function Home() {
-  useEffect(() => {
-    AOS.init({ duration: 2000 });
+  const [showCriar, setShowCriar] = useState(false)
+  const [showEntrar, setShowEntrar] = useState(false)
+
+  
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    AOS.init({duration: 2000});
   })
 
   const socket = useContext(SocketContext)
@@ -55,9 +64,20 @@ function Home() {
           <Link to="/"><h1>TubeSync</h1> </Link>
         </div>
         <div className={styles.headerRight}>
-          <Link to="/Room"><a href="">Criar Sala</a></Link>
-          <a href="#body">Tutorial</a>
+          <a href="#" onClick={() => setShowCriar(true)}>Criar Sala</a>
+          <a href="#" onClick={() => setShowEntrar(true)}>Entrar</a>
         </div>
+        <Modal id="criarSala" isShow={showCriar} setShow={() => setShowCriar(!showCriar)}>
+          <h2 className={styles.titulo}>Criar Sala</h2>
+          <input id="nome" placeholder='Seu nome' className={styles.input}></input>
+          <button onClick={() => {criarSala()}} className={styles.btn}>Criar</button>
+        </Modal>
+        <Modal id="showEntrar" isShow={showEntrar} setShow={() => setShowEntrar(!showEntrar)}>
+          <h2 className={styles.titulo}>Entrar em uma Sala</h2>
+          <input placeholder='Seu nome' className={styles.input}></input>
+          <input placeholder='Código da Sala' className={styles.input}></input>
+          <button onClick={() => {entrarSala()}} className={styles.btn}>Entrar</button>
+        </Modal>
       </header>
       <div className={styles.banner}>
         <div className={styles.bannerConteudo}>
