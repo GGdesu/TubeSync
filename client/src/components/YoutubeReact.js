@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import styles from '../pages/Room/Room.module.css'
 import YouTube from 'react-youtube';
 import socketIOClient from "socket.io-client"
+import { SocketContext } from '../context/Socket';
 
-const SYNCPLAYER_ENDPOINT = "http://localhost:4001/sync-player"
+const ROOM_ENDPOINT = "http://localhost:4001/room"
 
 //pre-definições do player
 const opts = {
@@ -17,6 +18,8 @@ const opts = {
 function createRoom (socket){
     socket.emit('createRoom');
 }
+
+
 function YoutubeReact({ url }) {
     // variaveis para o gerenciamento do estado do player
     const [playing, setPlaying] = useState(false)
@@ -30,10 +33,7 @@ function YoutubeReact({ url }) {
     const playerRef = useRef(null)
 
 
-
-    // Variaveis para gerenciamento do estado da conexao socket
-    const [socket, setSocket] = useState(null)
-    const [connected, setConnected] = useState(false)
+    const socket = useContext(SocketContext)
 
     const onPlayerStateChange = (event) => handleEvent(event.data)
 
@@ -139,8 +139,8 @@ function YoutubeReact({ url }) {
     }
 
     // Cria o socket uma vez quando o componente é montado
-    useEffect(() => {
-        const newSocket = socketIOClient(SYNCPLAYER_ENDPOINT);
+    /*useEffect(() => {
+        const newSocket = socketIOClient(ROOM_ENDPOINT);
 
         newSocket.on('connect', () => {
             console.log("Client: Connect!")
@@ -164,7 +164,7 @@ function YoutubeReact({ url }) {
             setSocket(null);
             setConnected(false);
         };
-    }, []);
+    }, []);*/
 
     // Usa o socket criado anteriormente para enviar
     useEffect(() => {

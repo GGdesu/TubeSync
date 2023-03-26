@@ -1,15 +1,15 @@
 import styles from '../pages/Room/Room.module.css';
 import menos from '../assets/menos.png'
 import pointer from '../assets/pointer.png'
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import socketIOClient from "socket.io-client"
+import { SocketContext } from '../context/Socket';
 
-const CHAT_ENDPOINT = "http://localhost:4001/chat"
 
 function ChatClient () {
-
-    const [socket, setSocket] = useState(null);
-    const [connected, setConnected] = useState(false);
+    
+    const socket = useContext(SocketContext)
+    
     const [isActive, setActive] = useState("false");
     const [messageList, setMessageList] = useState([]);
     const messageRef = useRef();
@@ -36,28 +36,6 @@ function ChatClient () {
         messageRef.current.value = "";
     }
 
-    useEffect(() => {
-        const newSocket = socketIOClient(CHAT_ENDPOINT);
-
-        newSocket.on('connect', () => {
-            console.log("Client: chat Connect!")
-            setConnected(true)
-        })
-
-        newSocket.on('disconnect', () => {
-            console.log("Client: chat Disconnect")
-            setConnected(false)
-        })
-
-        setSocket(newSocket);
-
-        // Retorna uma função de limpeza que desconecta o socket quando o componente é desmontado
-        return () => {
-            newSocket.disconnect();
-            setSocket(null);
-            setConnected(false);
-        };
-    }, []);
 
     useEffect(() => { 
         if (socket) {
