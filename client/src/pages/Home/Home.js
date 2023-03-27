@@ -1,7 +1,7 @@
 import styles from './Home.module.css'
 import Modal from '../../components/Modal'
 import { Link, useNavigate } from 'react-router-dom';
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 
 
 import youtube from '../../assets/youtube.png'
@@ -14,6 +14,7 @@ import invite from '../../assets/invite.png'
 import room from '../../assets/room.png'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import { SocketContext } from '../../context/Socket';
 
 function Home() {
   const [showCriar, setShowCriar] = useState(false)
@@ -26,30 +27,43 @@ function Home() {
     AOS.init({duration: 2000});
   })
 
-  /*Exemplo de uma requisição http ao servidor,
-  fiz para testar se tava funcionando a conexão entre o back e o front.
-  const [data, setData] = React.useState(null)
+  const socket = useContext(SocketContext)
 
+
+  // Cria o socket uma vez quando o componente é montado
   useEffect(() => {
-    fetch("/api")
-    .then((res) => res.json())
-    .then((data) => setData(data.message))
-  }, [])*/
-  const criarSala = () => {
-    navigate('/Room');
-  };
-  const entrarSala = () => {
-    navigate('/Room');
-  };
+    
+    socket.on('connect', () => {
+      console.log("Client: Connect! " + socket.id)
+      //console.log(newSocket)
+      //teste para ver se a sala funcionava
+      //createRoom(newSocket)
+      //setConnected(true)
+    })
 
-<div className='container'>
-  <h2>Codigo da sala</h2>
-  <div>
-    <p>chamar o codigo</p>
-  <div/>
-</div>
 
-</div>
+    socket.on('disconnect', () => {
+      console.log("Client: Disconnect! " + socket.id)
+      //setConnected(false)
+    })
+
+    //setSocket(socket);
+
+    // Retorna uma função de limpeza que desconecta o socket quando o componente é desmontado
+    /*return () => {
+      socket.disconnect();
+      //setSocket(null);
+      //setConnected(false);
+    };*/
+  }, []);
+
+  const criarSala = () =>{
+    navigate('/Room')
+  }
+  const entrarSala = () =>{
+    navigate('/Room')
+  }
+
   return (
     <div className={styles.app}>
       <header className={styles.header}>
@@ -73,22 +87,22 @@ function Home() {
         </Modal>
       </header>
       <div className={styles.banner}>
-          <div className={styles.bannerConteudo}>
-            <h2 className={styles.bannerTitulo}>
-              <span>Convide</span><br></br>
-              seus amigos para <br></br>assistir agora!
-            </h2>
-            <br></br>
-            <p>Com o TubeSync você e os convidados podem assistir em <br></br>sicronia sem interrupções indesejadas e práticas antigas como <br></br>fazer contagem para iniciar um filme.</p>
-            <br></br>
-            <br></br>
-            <Link to="/Room"><a href="" className={styles.bannerButton}>Criar Sala</a></Link>
-          </div>
+        <div className={styles.bannerConteudo}>
+          <h2 className={styles.bannerTitulo}>
+            <span>Convide</span><br></br>
+            seus amigos para <br></br>assistir agora!
+          </h2>
+          <br></br>
+          <p>Com o TubeSync você e os convidados podem assistir em <br></br>sicronia sem interrupções indesejadas e práticas antigas como <br></br>fazer contagem para iniciar um filme.</p>
+          <br></br>
+          <br></br>
+          <Link to="/Room"><a href="" className={styles.bannerButton}>Criar Sala</a></Link>
+        </div>
       </div>
       <div className={styles.body} id="body">
         <div className={styles.step1}>
           <h2 data-aos="zoom-in">Suportamos Vídeos das seguintes fontes</h2>
-          <img src={youtube} alt="youtube" data-aos="zoom-in"/>
+          <img src={youtube} alt="youtube" data-aos="zoom-in" />
           <h2 data-aos="zoom-in">O jeito TubeSync de sincronizar</h2>
         </div>
         <div className={`${styles.step2} ${styles.step}`}>
@@ -98,14 +112,14 @@ function Home() {
               <p>No menu do site clique no botão "Criar <br></br>Sala". Na sala criada você pode<br></br> customizar seu nome entre outras <br></br>coisas.</p>
             </div>
             <div className={styles.step2Right}>
-            <img src={room} alt="room"/>
+              <img src={room} alt="room" />
             </div>
-          </div>  
+          </div>
         </div>
         <div className={`${styles.step3} ${styles.step}`}>
           <div className={styles.container} data-aos="fade-right">
             <div className={styles.step3Left}>
-              <img src={invite} alt="invite"/>
+              <img src={invite} alt="invite" />
             </div>
             <div className={styles.step3Right}>
               <h2>Convide seus amigos</h2>
@@ -120,14 +134,14 @@ function Home() {
               <p>Na parte inferior do vídeo temos a <br></br> barra de inserção de link. Nesta barra <br></br>você pode inserir o link do vídeo<br></br> desejado para ser exibido para todos<br></br> os usuários da sala.</p>
             </div>
             <div className={styles.step4Right}>
-              <img src={search} alt="search"/>
+              <img src={search} alt="search" />
             </div>
           </div>
         </div>
         <div className={`${styles.step5} ${styles.step}`}>
           <div className={styles.container} data-aos="fade-right">
             <div className={styles.step5Left}>
-              <img src={sync} alt="sync"/>
+              <img src={sync} alt="sync" />
             </div>
             <div className={styles.step5Right}>
               <h2>Assista sincronizado</h2>
@@ -140,11 +154,11 @@ function Home() {
         <h2>TubeSync.</h2>
         <p>Assistindo sincronizado desde 2022!</p>
         <div className={styles.footerImg}>
-          <img src={facebook} alt="facebook"/>
-          <img src={twitter} alt="twitter"/>
-          <img src={instagram} alt="instagram"/>
+          <img src={facebook} alt="facebook" />
+          <img src={twitter} alt="twitter" />
+          <img src={instagram} alt="instagram" />
         </div>
-      </footer> 
+      </footer>
     </div>
   );
 }
