@@ -2,7 +2,6 @@ import styles from '../pages/Room/Room.module.css';
 import menos from '../assets/menos.png'
 import pointer from '../assets/pointer.png'
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import socketIOClient from "socket.io-client"
 import { SocketContext } from '../context/Socket';
 
 

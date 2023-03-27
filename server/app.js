@@ -1,6 +1,7 @@
 import express from "express"
 import { createServer } from "http"
 import { Server, Socket } from "socket.io"
+import { makeID } from "./utils/Util.js"
 
 const PORT = process.env.PORT || 4001
 import router from "./routes/index.js"
@@ -81,17 +82,6 @@ roomNSP.on("connection", (socket) => {
     })
   //--------------------------------------------------------------------
 });
-
-
-function makeID(length) {
-  var result = "";
-  var characters = "0123456789";
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
