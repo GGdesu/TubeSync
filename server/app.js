@@ -12,16 +12,16 @@ app.use(router)
 const server = createServer(app)
 
 const io = new Server(server, {
-    cors: {
-        origin: '*',
-    }
+  cors: {
+    origin: '*',
+  }
 })
 
 //SOCKET QUE IRA CUIDAR DA SINCRONIZACAO, CHAT E GERENCIAMENTOS DAS SALAS
 const roomNSP = io.of("/room");
 
 roomNSP.on("connection", (socket) => {
-  
+
   console.log(`client ${socket.id} connected`)
 
   //Listeners para a sincronizacao do player
@@ -73,15 +73,23 @@ roomNSP.on("connection", (socket) => {
   //listeners para o chat de mensagens
   console.log(`client ${socket.id} connected to chat`)
 
-    socket.on("message", (data) => {
-        console.log("message data: ", data)
-        
-        const message = "user-" + socket.id.substring(0, 5) + ": " + data
-        socket.broadcast.emit("responseMessage", message) 
-        socket.emit("responseMessage", message) 
+  socket.on("message", data => {
+    
+    socket.emit('responseMessage', {
+      text: data,
+      id: socket.id,
+      username: 'Joao'
     })
-  //--------------------------------------------------------------------
-});
+
+  })
+
+  socket.broadcast.emit("responseMessage", {
+    text: data,
+    id: socket.id,
+    username: 'Joao'
+  })
+
+})
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
