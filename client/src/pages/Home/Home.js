@@ -1,7 +1,7 @@
 import styles from './Home.module.css'
 import Modal from '../../components/Modal'
 import { Link, useNavigate } from 'react-router-dom';
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 
 
 import youtube from '../../assets/youtube.png'
@@ -56,6 +56,13 @@ function Home() {
       //setConnected(false);
     };*/
   }, []);
+
+  const criarSala = () =>{
+    navigate('/Room')
+  }
+  const entrarSala = () =>{
+    navigate('/Room')
+  }
 
   return (
     <div className={styles.app}>

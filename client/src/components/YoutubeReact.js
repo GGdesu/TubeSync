@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import styles from '../pages/Room/Room.module.css'
 import YouTube from 'react-youtube';
-import socketIOClient from "socket.io-client"
 import { SocketContext } from '../context/Socket';
 
-const ROOM_ENDPOINT = "http://localhost:4001/room"
+//const ROOM_ENDPOINT = "http://localhost:4001/room"
 
 //pre-definições do player
 const opts = {
@@ -15,7 +14,7 @@ const opts = {
     },
 };
 
-function createRoom (socket){
+function createRoom(socket) {
     socket.emit('createRoom');
 }
 
@@ -54,12 +53,12 @@ function YoutubeReact({ url }) {
             if (type !== 3) {
                 let timeout = setTimeout(() => {
                     if (type === 1) { // PLAY
-                        //console.log("entrou event play")
+                        console.log("entrou event play")
                         setPrevPlaying(false)
                         handlePlay()
                     }
                     else if (type === 2) { // PAUSE
-                        //console.log("entrou event pause")
+                        console.log("entrou event pause")
                         setPrevPlaying(true)
                         handlePause()
                     }
@@ -89,43 +88,57 @@ function YoutubeReact({ url }) {
 
     //funcao que recebe um tempo em segundo e busca no video
     const handleSeekTo = (seconds) => {
-        setIsSeeked(false)
-        playerRef.current.seekTo(seconds)
+        if (playerRef.current) {
+            setIsSeeked(false)
+            playerRef.current.seekTo(seconds)
+        }else{
+            console.log("não conseguiu entrar no handleSeekTo")
+        }
 
     }
 
     const handlePlay = () => {
-
-        setSeeked(playerRef.current.getCurrentTime())
-        setPlaying(true)
-        console.log("Play!")
-        playerRef.current.playVideo()
-        
+        //console.log("play user-" + socket.id)
+        if (playerRef.current) {
+            setSeeked(playerRef.current.getCurrentTime())
+            setIsSeeked(true)
+            setPlaying(true)
+            console.log("Play!")
+            playerRef.current.playVideo()
+        }
     }
 
     const handlePause = () => {
-        setSeeked(playerRef.current.getCurrentTime())
-        setPlaying(false)
-        console.log("Pause!")
-        playerRef.current.pauseVideo()
+        //console.log("pause user-" + socket.id)
+        if (playerRef.current) {
+            setSeeked(playerRef.current.getCurrentTime())
+            setPlaying(false)
+            console.log("Pause!")
+            playerRef.current.pauseVideo()
+        }
     }
 
     const handleBuffer = () => { console.log("Buffer!") }
     const handleSeek = () => {
-        
-        setSeeked(playerRef.current.getCurrentTime())
-        
-        if (socket && isSeeked) {
-            console.log("Seek!")
-            console.log("current Time: ", seeked)
-            console.log("Emitindo seekSync, client: ", socket.id)
-            socket.emit("seekSync", { "play": playing, "seek": playerRef.current.getCurrentTime(), "client": socket.id })
+        console.log("antes de passar pelo if handleseek")
+        if (playerRef.current) {
+            setSeeked(playerRef.current.getCurrentTime())
+            console.log("isSeeked " + isSeeked)
+            if (socket && isSeeked) {
+                console.log("Seek!")
+                console.log("current Time: ", seeked)
+                console.log("Emitindo seekSync, client: ", socket.id)
+                socket.emit("seekSync", { "play": playing, "seek": playerRef.current.getCurrentTime(), "client": socket.id })
+
+            } else {
+                console.log("seekTo: ", seeked)
+            }
+
+            setIsSeeked(true)
             
         }else{
-            console.log("seekTo: ", seeked)
+            console.log("nao conseguiu entrar no handleSeek")
         }
-        
-        setIsSeeked(true)
 
     }
 
@@ -169,12 +182,12 @@ function YoutubeReact({ url }) {
     // Usa o socket criado anteriormente para enviar
     useEffect(() => {
 
-        
+
         if (socket && prevPlaying !== playing) {
             console.log("Emitindo playPauseSync, client: ", socket.id)
             socket.emit("playPauseSync", { "play": playing, "seek": seeked, "client": socket.id });
 
-        } 
+        }
     }, [playing, socket]);
 
     // Usa o socket criado anteriormente para receber mensagens
@@ -182,7 +195,7 @@ function YoutubeReact({ url }) {
 
         if (socket) {
             socket.on('responsePlayPauseSync', (data) => {
-                
+
                 if (data["play"] === true) {
                     setPrevPlaying(true)
                     handlePlay()
@@ -193,7 +206,7 @@ function YoutubeReact({ url }) {
                     handlePause()
                     handleSeekTo(data["seek"])
                 }
-                
+
 
             });
 
@@ -203,7 +216,7 @@ function YoutubeReact({ url }) {
                 handleSeekTo(data["seek"])
             })
 
-            socket.on('setID', (data)=> {
+            socket.on('setID', (data) => {
                 console.log(`O id da sala criada eh ${data}`)
             })
 
