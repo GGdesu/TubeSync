@@ -1,23 +1,31 @@
 import styles from './Room.module.css'
 import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
 import add from '../../assets/add.png'
 import YoutubeReact from '../../components/YoutubeReact';
 import ytUrlHandler from '../../utils/UrlHandler';
 import ChatClient from '../../components/Chat';
+import { SocketContext } from '../../context/Socket';
 
 
 function Room() {
-    
-    const [isInfo, setInfo] = useState("false");
-    const [isSettings, setSettings] = useState("false");
-    const [isInvite, setInvite] = useState("false");
+    const socket = useContext(SocketContext)
+    const [isInfo, setInfo] = useState("false")
+    const [isSettings, setSettings] = useState("false")
+    const [isInvite, setInvite] = useState("false")
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
 
-    
+    useEffect(() => {
+        if(socket){
+            socket.on('updateUrl', url => {
+                console.log("chegou o link ", url)
+                setUrl(url)
+            })
+        }
+    }, [socket])
 
     const infoToggle = () => {
         setInfo(!isInfo);
@@ -28,7 +36,9 @@ function Room() {
         if(ytUrlHandler(inputYtUrl) === ""){
             alert("Invalid Link!")
         }else{
-            setUrl(ytUrlHandler(inputYtUrl))
+            let url = ytUrlHandler(inputYtUrl)
+            setUrl(url)
+            socket.emit('changeUrl', url)
         }
         
     }

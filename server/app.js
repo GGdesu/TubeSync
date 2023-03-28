@@ -24,6 +24,11 @@ roomNSP.on("connection", (socket) => {
   console.log(`client ${socket.id} connected`)
 
   //Listeners para a sincronizacao do player
+  socket.on('changeUrl', url => {
+    console.log("link recebido " + url)
+    socket.broadcast.emit('updateUrl', url)
+  })
+
   socket.on("playPauseSync", (data) => {
     console.log("playPauseSync data: ", data)
     socket.broadcast.emit("responsePlayPauseSync", data)
@@ -76,13 +81,13 @@ roomNSP.on("connection", (socket) => {
     socket.emit('responseMessage', {
       text: data,
       id: socket.id,
-      username: 'Joao'
+      username: `user-${socket.id.substring(0, 3)}`
     })
 
     socket.broadcast.emit("responseMessage", {
       text: data,
       id: socket.id,
-      username: 'Joao'
+      username: `user-${socket.id.substring(0, 3)}`
     })
   })
 })
