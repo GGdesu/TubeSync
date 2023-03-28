@@ -57,12 +57,12 @@ function Home() {
     };*/
   }, []);
 
-  const criarSala = () => {
-    navigate('/Room');
-  };
-  const entrarSala = () => {
-    navigate('/Room');
-  };
+  const criarSala = () =>{
+    navigate('/Room')
+  }
+  const entrarSala = () =>{
+    navigate('/Room')
+  }
 
   return (
     <div className={styles.app}>

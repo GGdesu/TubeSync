@@ -9,6 +9,7 @@
 
 .hide {
     height: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 /*---------- header -------------*/
@@ -204,14 +205,15 @@ input{
 
 .chatBody{
     display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--chatBody-color);
+    /* justify-content: center;
+    align-items: center; */
+    color: #fff;
     overflow: auto;
     transition: all 0.4s ease-in-out;
     height: 370px;
     background-color: var(--chatBody-bg);
     flex-direction: column;
+    padding-bottom: 10px;
 }
 
 .chatContainerInput{
@@ -236,3 +238,22 @@ input{
     margin-right: 5px;
     width: 265px;
 }
+
+.messageContainer{
+    max-width: 250px;
+    width: fit-content;
+    background-color: rgb(0, 0, 0);
+    margin-top: 5px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 7px;
+    align-self: start;
+  }
+  
+
+.myMessage {
+    margin-right: 10px;
+    align-self: end;
+    background-color: rgba(248, 248, 248, 0.781);
+}
+
