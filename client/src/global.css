@@ -42,23 +42,23 @@ li{
 }
 
 .light-mode:root {
-    --header-bg: #968a67;
+    --header-bg: #012a4a;
     --header-color: #000000;
-    --roomSettings-bg: #968a67;
-    --inviteSettings-bg: #968a67;
-    --body-bg: #faebbd;
-    --search-border-bottom-color: #7c7132;
-    --searchInput-bg: #faebbd;
+    --roomSettings-bg: #012a4a;
+    --inviteSettings-bg: #012a4a;
+    --body-bg: #a9d6e5;
+    --search-border-bottom-color: #2c7da0;
+    --searchInput-bg: #a9d6e5;
     --searchInput-color: #000000;
     --placeholder-color: #000000;
-    --infoHeader-bg: #7c7132;
+    --infoHeader-bg: #2c7da0;
     --infoHeader-color: #fff;
-    --infoBody-bg: #968a67;
+    --infoBody-bg: #012a4a;
     --infoBody-color: #fff;
     --chatHeader-color: #fff;
-    --chatHeader-bg: #7c7132;
+    --chatHeader-bg: #2c7da0;
     --chatBody-color: #fff;
-    --chatBody-bg: #968a67;
-    --chatContainerInput-bg: #968a67;
+    --chatBody-bg: #012a4a;
+    --chatContainerInput-bg: #012a4a;
     --chatInput-bg: #fff;
 }
