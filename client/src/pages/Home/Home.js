@@ -1,7 +1,7 @@
 import styles from './Home.module.css'
 import Modal from '../../components/Modal'
 import { Link, useNavigate } from 'react-router-dom';
-import React, {useState, useEffect, useContext} from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 
 
 import youtube from '../../assets/youtube.png'
@@ -20,11 +20,16 @@ function Home() {
   const [showCriar, setShowCriar] = useState(false)
   const [showEntrar, setShowEntrar] = useState(false)
 
-  
+  const [username, setUsername] = useState(null)
+  const [code, setCode] = useState(null)
+
+  const [responseReceive, setResponseReceive] = useState(false)
+
+
   const navigate = useNavigate();
 
-  useEffect(()=>{
-    AOS.init({duration: 2000});
+  useEffect(() => {
+    AOS.init({ duration: 2000 });
   })
 
   const socket = useContext(SocketContext)
@@ -32,7 +37,7 @@ function Home() {
 
   // Cria o socket uma vez quando o componente é montado
   useEffect(() => {
-    
+
     socket.on('connect', () => {
       console.log("Client: Connect! " + socket.id)
       //console.log(newSocket)
@@ -46,22 +51,50 @@ function Home() {
       console.log("Client: Disconnect! " + socket.id)
       //setConnected(false)
     })
-
-    //setSocket(socket);
-
-    // Retorna uma função de limpeza que desconecta o socket quando o componente é desmontado
-    /*return () => {
-      socket.disconnect();
-      //setSocket(null);
-      //setConnected(false);
-    };*/
   }, []);
 
-  const criarSala = () =>{
+  const onChangeUsername = (e) => {
+    setUsername(e.target.value)
+  }
+
+  const onChangeCode = (e) => {
+    setCode(e.target.value)
+  }
+
+
+
+  const criarSala = (e) => {
+    e.preventDefault()
+    socket.emit("createRoom", username)
     navigate('/Room')
   }
-  const entrarSala = () =>{
-    navigate('/Room')
+
+  const isAllowed = async (socket) => {
+    let emitResponse = await socket.emitWithAck("joinRoom", {
+      roomID: code,
+      username: username
+    })
+
+    return emitResponse
+
+
+  }
+
+  const entrarSala = async (e) => {
+    
+    e.preventDefault()
+
+    let response = await isAllowed(socket)
+    console.log("allow?", response.allow)
+    
+    if (response.allow) {
+      navigate('/Room')
+    } else {
+      alert(response.message)
+      
+    }
+    
+
   }
 
   return (
@@ -75,15 +108,20 @@ function Home() {
           <a href="#" onClick={() => setShowEntrar(true)}>Entrar</a>
         </div>
         <Modal id="criarSala" isShow={showCriar} setShow={() => setShowCriar(!showCriar)}>
-          <h2 className={styles.titulo}>Criar Sala</h2>
-          <input id="nome" placeholder='Seu nome' className={styles.input}></input>
-          <button onClick={() => {criarSala()}} className={styles.btn}>Criar</button>
+          <form onSubmit={criarSala}>
+            <h2 className={styles.titulo}>Criar Sala</h2>
+            <input onChange={onChangeUsername} id="nome" placeholder='Seu nome' className={styles.input}></input>
+            <button type='submit' className={styles.btn}>Criar</button>
+          </form>
         </Modal>
         <Modal id="showEntrar" isShow={showEntrar} setShow={() => setShowEntrar(!showEntrar)}>
-          <h2 className={styles.titulo}>Entrar em uma Sala</h2>
-          <input placeholder='Seu nome' className={styles.input}></input>
-          <input placeholder='Código da Sala' className={styles.input}></input>
-          <button onClick={() => {entrarSala()}} className={styles.btn}>Entrar</button>
+          <form onSubmit={entrarSala}>
+            <h2 className={styles.titulo}>Entrar em uma Sala</h2>
+            <input onChange={onChangeUsername} placeholder='Seu nome' className={styles.input}></input>
+            <input onChange={onChangeCode} placeholder='Código da Sala' className={styles.input}></input>
+            <button type='submit' className={styles.btn}>Entrar</button>
+          </form>
+
         </Modal>
       </header>
       <div className={styles.banner}>

@@ -3,7 +3,6 @@ import styles from '../pages/Room/Room.module.css'
 import YouTube from 'react-youtube';
 import { SocketContext } from '../context/Socket';
 
-//const ROOM_ENDPOINT = "http://localhost:4001/room"
 
 //pre-definições do player
 const opts = {
@@ -13,10 +12,6 @@ const opts = {
         autoplay: 0,
     },
 };
-
-function createRoom(socket) {
-    socket.emit('createRoom');
-}
 
 
 function YoutubeReact({ url }) {
@@ -120,10 +115,10 @@ function YoutubeReact({ url }) {
 
     const handleBuffer = () => { console.log("Buffer!") }
     const handleSeek = () => {
-        console.log("antes de passar pelo if handleseek")
+
         if (playerRef.current) {
             setSeeked(playerRef.current.getCurrentTime())
-            console.log("isSeeked " + isSeeked)
+
             if (socket && isSeeked) {
                 console.log("Seek!")
                 console.log("current Time: ", seeked)
@@ -150,34 +145,6 @@ function YoutubeReact({ url }) {
         console.log("onReady\n", playerRef.current)
         //console.log("current time", playerRef.current.getCurrentTime())
     }
-
-    // Cria o socket uma vez quando o componente é montado
-    /*useEffect(() => {
-        const newSocket = socketIOClient(ROOM_ENDPOINT);
-
-        newSocket.on('connect', () => {
-            console.log("Client: Connect!")
-            //console.log(newSocket)
-            //teste para ver se a sala funcionava
-            //createRoom(newSocket)
-            setConnected(true)
-        })
-
-
-        newSocket.on('disconnect', () => {
-            console.log("Client: Disconnect")
-            setConnected(false)
-        })
-
-        setSocket(newSocket);
-
-        // Retorna uma função de limpeza que desconecta o socket quando o componente é desmontado
-        return () => {
-            newSocket.disconnect();
-            setSocket(null);
-            setConnected(false);
-        };
-    }, []);*/
 
     // Usa o socket criado anteriormente para enviar
     useEffect(() => {

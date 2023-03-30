@@ -1,12 +1,13 @@
 import styles from './Room.module.css'
 import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
 import add from '../../assets/add.png'
 import YoutubeReact from '../../components/YoutubeReact';
 import ytUrlHandler from '../../utils/UrlHandler';
 import ChatClient from '../../components/Chat';
+import { SocketContext } from '../../context/Socket';
 
 
 function Room() {
@@ -17,6 +18,7 @@ function Room() {
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
 
+    const socket = useContext(SocketContext)
     
 
     const infoToggle = () => {
@@ -36,12 +38,29 @@ function Room() {
     const onChangeUrl = (e) => {
         setInputYtUrl(e.target.value)
     }
+
+    const leaveRoom = () => {
+        socket.emit("leaveRoom", socket.data.room)
+    }
+
+    useEffect(() => {
+        if(socket){
+
+            socket.on("userLeaveMsg", (msg) => {
+                console.log(msg)
+            })
+
+            socket.on("UserJoinMsg", msg => {
+                console.log(msg)
+            })
+        }
+    }, [socket])
     
     return (
         <div className={styles.app}>
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
-                    <Link to="/"><h1>TubeSync</h1> </Link>
+                    <Link onClick={() => leaveRoom()} to="/"><h1>TubeSync</h1> </Link>
                 </div>
                 <div className={styles.headerRight}>
                     <button href="#" onClick={() => setSettings(!isSettings)}><img src={settings} alt="settings" /></button>

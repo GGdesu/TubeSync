@@ -55,6 +55,10 @@ function ChatClient () {
             socket.on('responseMessage', data => {
                 setMessageList((current) => [...current, data])
             })
+
+            socket.on("updateUsersRoom", data => {
+                console.log("update: ", data)
+            })
             return () => socket.off('responseMessage')
         }
     }, [socket]);
@@ -89,4 +93,5 @@ function ChatClient () {
         </div>
     )
 }
+
 export default ChatClient;
