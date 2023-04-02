@@ -221,9 +221,17 @@ roomNSP.on("connection", (socket) => {
     roomNSP.in(socket.data.room).emit('responseMessage', {
       text: data,
       id: socket.id,
-      username: 'Joao'
-    })
+      username: `user-${socket.id.substring(0, 3)}`,
+      timestamp: new Date().toLocaleTimeString([],{hour: "numeric", minute: "numeric"})
+      }
+    )
 
+    socket.broadcast.emit("responseMessage", {
+      text: data,
+      id: socket.id,
+      username: `user-${socket.id.substring(0, 3)}`,
+      timestamp: new Date().toLocaleTimeString([], {hour: "numeric", minute: "numeric"})
+    })
   })
 
 })

@@ -7,14 +7,14 @@ import add from '../../assets/add.png'
 import YoutubeReact from '../../components/YoutubeReact';
 import ytUrlHandler from '../../utils/UrlHandler';
 import ChatClient from '../../components/Chat';
+import RoomInfo from '../../components/RoomInfo';
 import { SocketContext } from '../../context/Socket';
 
 
 function Room() {
-    
-    const [isInfo, setInfo] = useState("false");
-    const [isSettings, setSettings] = useState("false");
-    const [isInvite, setInvite] = useState("false");
+    const [isInfo, setInfo] = useState("false")
+    const [isSettings, setSettings] = useState("false")
+    const [isInvite, setInvite] = useState("false")
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
 
@@ -149,12 +149,10 @@ function Room() {
                             <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
                         </form>
                     </div>
-                    <div className={styles.roomInfo}>
-                        <div className={styles.infoHeader} onClick={infoToggle}>
-                            <h3>Room info</h3>
-                        </div>
-                        <div className={`${styles.infoBody} ${isInfo ? styles.hide : ""}`}><h3>Informações</h3></div>
-                    </div>
+                    <RoomInfo
+                        isInfo={isInfo}
+                        infoToggle={infoToggle}
+                    />
                 </div>
                 <div className={styles.bodyRight}>
                     <ChatClient/>
