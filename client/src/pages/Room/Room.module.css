@@ -1,5 +1,6 @@
 /* all */
 
+
 .app{
     height: 100%;
     display: flex;
@@ -8,6 +9,7 @@
 
 .hide {
     height: 0 !important;
+    padding-bottom: 0 !important;
 }
 
 /*---------- header -------------*/
@@ -16,8 +18,8 @@ h1{
 }
 
 .header{
-    background-color: #151515;
-    color: #fff;
+    background-color: var(--header-bg);
+    color: var(--header-color);
     height: 105px;
     display: flex;
     flex-direction: row;
@@ -53,7 +55,7 @@ h1{
     position: absolute;
     right: 5%;
     top: 105px;
-    background-color: #151515;
+    background-color: var(--roomSettings-bg);
     overflow: hidden;
 }
 
@@ -71,7 +73,7 @@ h1{
     top: 105px;
     width: 100px;
     height: 50px;
-    background-color: #151515;
+    background-color: var(--inviteSettings-bg);
     overflow: hidden;
 }
 
@@ -84,7 +86,7 @@ h1{
     display: flex;
     flex-direction: row;
     flex: 1;
-    background-color: #1E192C;
+    background-color: var(--body-bg);
 }
 
 /*---------- body-left -------------*/
@@ -109,7 +111,7 @@ h1{
     margin: .2rem 0 0 1rem;
     width: 50vw;
     height: 40px;
-    border-bottom-color: #FA00FF;
+    border-bottom-color: var(--search-border-bottom-color);
     border-bottom-style: solid;
 }
 
@@ -126,12 +128,12 @@ button{
 .search input{
     width: 47vw;
     margin-left: 1.5rem;
-    background-color: #1E192C;
-    color: #B6B6B6;
+    background-color: var(--searchInput-bg);
+    color: var(--searchInput-color);
 }
 
 ::placeholder { 
-    color: #B6B6B6;
+    color: var(--placeholder-color);
     font-weight: bold;
     opacity: 1;
   }
@@ -155,8 +157,8 @@ input{
 .infoHeader{
     cursor: pointer;
     text-align: center;
-    background-color: #FA00FF;
-    color: #fff;
+    background-color: var(--infoHeader-bg);
+    color: var(--infoHeader-color);
     padding: 10px;
     width: 150px;
     border-radius: 5px 5px 0 0;
@@ -167,9 +169,9 @@ input{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: #fff;
+    color: var(--infoBody-color);
     transition: all 0.4s ease-in-out;
-    background-color: #202020;
+    background-color: var(--infoBody-bg);
     width: 100%;
     height: 14vh;
 }
@@ -190,8 +192,8 @@ input{
 
 .chatHeader{
     cursor: pointer;
-    color: white;
-    background-color: #FA00FF;
+    color: var(--chatHeader-color);
+    background-color: var(--chatHeader-bg);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -203,14 +205,15 @@ input{
 
 .chatBody{
     display: flex;
-    justify-content: center;
-    align-items: center;
+    /* justify-content: center;
+    align-items: center; */
     color: #fff;
     overflow: auto;
     transition: all 0.4s ease-in-out;
     height: 370px;
-    background-color: #202020;
+    background-color: var(--chatBody-bg);
     flex-direction: column;
+    padding-bottom: 10px;
 }
 
 .chatContainerInput{
@@ -219,14 +222,14 @@ input{
     justify-content: center;
     transition: all 0.4s ease-in-out;
     height: 50px;
-    background-color: #202020;
+    background-color: var(--chatContainerInput-bg);
 }
 
 .chatInput{
     display: flex;
     justify-content: center;
     border-radius: 30px;
-    background-color: #fff;
+    background-color: var(--chatInput-bg);
     height: 35px;
     width: 90%;
 }
@@ -235,3 +238,22 @@ input{
     margin-right: 5px;
     width: 265px;
 }
+
+.messageContainer{
+    max-width: 250px;
+    width: fit-content;
+    background-color: rgb(0, 0, 0);
+    margin-top: 5px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 7px;
+    align-self: start;
+  }
+  
+
+.myMessage {
+    margin-right: 10px;
+    align-self: end;
+    background-color: rgba(248, 248, 248, 0.781);
+}
+

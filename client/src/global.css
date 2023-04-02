@@ -18,3 +18,47 @@ a:-webkit-any-link {
 li{
     list-style: none;
 }
+
+:root { 
+    --header-bg: #151515;
+    --header-color: #fff;
+    --roomSettings-bg: #151515;
+    --inviteSettings-bg: #151515;
+    --body-bg: #1E192C;
+    --search-border-bottom-color: #FA00FF;
+    --searchInput-bg: #1E192C;
+    --searchInput-color: #B6B6B6;
+    --placeholder-color: #B6B6B6;
+    --infoHeader-bg: #FA00FF;
+    --infoHeader-color: #fff;
+    --infoBody-bg: #202020;
+    --infoBody-color: #fff;
+    --chatHeader-color: #fff;
+    --chatHeader-bg: #FA00FF;
+    --chatBody-color: #fff;
+    --chatBody-bg: #202020;
+    --chatContainerInput-bg: #202020;
+    --chatInput-bg: #fff;
+}
+
+.light-mode:root {
+    --header-bg: #012a4a;
+    --header-color: #000000;
+    --roomSettings-bg: #012a4a;
+    --inviteSettings-bg: #012a4a;
+    --body-bg: #a9d6e5;
+    --search-border-bottom-color: #2c7da0;
+    --searchInput-bg: #a9d6e5;
+    --searchInput-color: #000000;
+    --placeholder-color: #000000;
+    --infoHeader-bg: #2c7da0;
+    --infoHeader-color: #fff;
+    --infoBody-bg: #012a4a;
+    --infoBody-color: #fff;
+    --chatHeader-color: #fff;
+    --chatHeader-bg: #2c7da0;
+    --chatBody-color: #fff;
+    --chatBody-bg: #012a4a;
+    --chatContainerInput-bg: #012a4a;
+    --chatInput-bg: #fff;
+}

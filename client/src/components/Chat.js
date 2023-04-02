@@ -1,18 +1,20 @@
 import styles from '../pages/Room/Room.module.css';
 import menos from '../assets/menos.png'
 import pointer from '../assets/pointer.png'
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import socketIOClient from "socket.io-client"
+import { SocketContext } from '../context/Socket';
 
-const CHAT_ENDPOINT = "http://localhost:4001/chat"
 
 function ChatClient () {
-
-    const [socket, setSocket] = useState(null);
-    const [connected, setConnected] = useState(false);
+    
+    const socket = useContext(SocketContext)
+    
     const [isActive, setActive] = useState("false");
     const [messageList, setMessageList] = useState([]);
     const messageRef = useRef();
+    const bottomRef = useRef();
+
 
     const handleToggle = () => {
         setActive(!isActive);
@@ -29,35 +31,25 @@ function ChatClient () {
         if (!message.trim()) return;
 
         socket.emit('message', message);
-        clearInput();
+        clearInput()
+        focusInput()
     }
 
     const clearInput = () => { 
         messageRef.current.value = "";
     }
 
+    const focusInput = () => {
+        messageRef.current.focus();
+    }
+
+    const autoScroll = () => {
+        bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+
+
     useEffect(() => {
-        const newSocket = socketIOClient(CHAT_ENDPOINT);
-
-        newSocket.on('connect', () => {
-            console.log("Client: chat Connect!")
-            setConnected(true)
-        })
-
-        newSocket.on('disconnect', () => {
-            console.log("Client: chat Disconnect")
-            setConnected(false)
-        })
-
-        setSocket(newSocket);
-
-        // Retorna uma função de limpeza que desconecta o socket quando o componente é desmontado
-        return () => {
-            newSocket.disconnect();
-            setSocket(null);
-            setConnected(false);
-        };
-    }, []);
+        autoScroll()}, [messageList]);
 
     useEffect(() => { 
         if (socket) {
@@ -77,9 +69,13 @@ function ChatClient () {
             <div className={`${styles.chatBody} ${isActive ? styles.hide : ""}`}>
                 {
                     messageList.map((message, index) => (
-                        <p key={index}>{message}<br /></p>
-                    ))
+                    <div className={`${styles["messageContainer"]} ${message.id === socket.id && styles["myMessage"]}`} key={index}>
+                        <div className="message-author"><strong>{message.username}</strong></div>
+                        <div className="myMessage">{message.text}</div>
+                    </div>
+                    )) 
                 }
+            <div ref={bottomRef} />
             </div>
             <div className={`${styles.chatContainerInput} ${isActive ? styles.hide : ""}`}>
                 <div className={styles.chatInput}>
