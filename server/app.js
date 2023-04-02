@@ -81,13 +81,16 @@ roomNSP.on("connection", (socket) => {
     socket.emit('responseMessage', {
       text: data,
       id: socket.id,
-      username: `user-${socket.id.substring(0, 3)}`
-    })
+      username: `user-${socket.id.substring(0, 3)}`,
+      timestamp: new Date().toLocaleTimeString([],{hour: "numeric", minute: "numeric"})
+      }
+    )
 
     socket.broadcast.emit("responseMessage", {
       text: data,
       id: socket.id,
-      username: `user-${socket.id.substring(0, 3)}`
+      username: `user-${socket.id.substring(0, 3)}`,
+      timestamp: new Date().toLocaleTimeString([], {hour: "numeric", minute: "numeric"})
     })
   })
 })

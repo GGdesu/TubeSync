@@ -254,6 +254,10 @@ input{
 .myMessage {
     margin-right: 10px;
     align-self: end;
-    background-color: rgba(248, 248, 248, 0.781);
+    background-color: rgb(153, 153, 153);
 }
 
+.messageTimestamp {
+    font-size: 0.7rem;
+    margin-top: 3px;
+  }
