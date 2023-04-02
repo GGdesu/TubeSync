@@ -1,8 +1,6 @@
 import styles from './Home.module.css'
-import Modal from '../../components/Modal'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import React, { useState, useEffect, useContext } from 'react'
-
 
 import youtube from '../../assets/youtube.png'
 import facebook from '../../assets/facebook.png'
@@ -15,18 +13,12 @@ import room from '../../assets/room.png'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { SocketContext } from '../../context/Socket';
+import ModalCriarSala from '../../components/ModalCriarSala';
+import ModalEntrarSala from '../../components/ModalEntrarSala';
 
 function Home() {
   const [showCriar, setShowCriar] = useState(false)
   const [showEntrar, setShowEntrar] = useState(false)
-
-  const [username, setUsername] = useState(null)
-  const [code, setCode] = useState(null)
-
-  const [responseReceive, setResponseReceive] = useState(false)
-
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     AOS.init({ duration: 2000 });
@@ -53,50 +45,6 @@ function Home() {
     })
   }, []);
 
-  const onChangeUsername = (e) => {
-    setUsername(e.target.value)
-  }
-
-  const onChangeCode = (e) => {
-    setCode(e.target.value)
-  }
-
-
-
-  const criarSala = (e) => {
-    e.preventDefault()
-    socket.emit("createRoom", username)
-    navigate('/Room')
-  }
-
-  const isAllowed = async (socket) => {
-    let emitResponse = await socket.emitWithAck("joinRoom", {
-      roomID: code,
-      username: username
-    })
-
-    return emitResponse
-
-
-  }
-
-  const entrarSala = async (e) => {
-    
-    e.preventDefault()
-
-    let response = await isAllowed(socket)
-    console.log("allow?", response.allow)
-    
-    if (response.allow) {
-      navigate('/Room')
-    } else {
-      alert(response.message)
-      
-    }
-    
-
-  }
-
   return (
     <div className={styles.app}>
       <header className={styles.header}>
@@ -107,22 +55,8 @@ function Home() {
           <a href="#" onClick={() => setShowCriar(true)}>Criar Sala</a>
           <a href="#" onClick={() => setShowEntrar(true)}>Entrar</a>
         </div>
-        <Modal id="criarSala" isShow={showCriar} setShow={() => setShowCriar(!showCriar)}>
-          <form onSubmit={criarSala}>
-            <h2 className={styles.titulo}>Criar Sala</h2>
-            <input onChange={onChangeUsername} id="nome" placeholder='Seu nome' className={styles.input}></input>
-            <button type='submit' className={styles.btn}>Criar</button>
-          </form>
-        </Modal>
-        <Modal id="showEntrar" isShow={showEntrar} setShow={() => setShowEntrar(!showEntrar)}>
-          <form onSubmit={entrarSala}>
-            <h2 className={styles.titulo}>Entrar em uma Sala</h2>
-            <input onChange={onChangeUsername} placeholder='Seu nome' className={styles.input}></input>
-            <input onChange={onChangeCode} placeholder='Código da Sala' className={styles.input}></input>
-            <button type='submit' className={styles.btn}>Entrar</button>
-          </form>
-
-        </Modal>
+        <ModalCriarSala id="criarSala" isShow={showCriar} setShow={() => setShowCriar(!showCriar)}/>
+        <ModalEntrarSala id="showEntrar" isShow={showEntrar} setShow={() => setShowEntrar(!showEntrar)}/>
       </header>
       <div className={styles.banner}>
         <div className={styles.bannerConteudo}>

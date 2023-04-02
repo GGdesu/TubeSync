@@ -10,7 +10,7 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/room" element={<Room />} />
+                    <Route path="/Room" element={<Room />} />
                 </Routes>
             </Router>
         </ SocketContext.Provider>
