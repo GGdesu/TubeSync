@@ -11,6 +11,7 @@ import RoomInfo from '../../components/RoomInfo';
 import { SocketContext } from '../../context/Socket';
 
 
+
 function Room() {
     const socket = useContext(SocketContext)
     const [isInfo, setInfo] = useState("false")
@@ -18,6 +19,9 @@ function Room() {
     const [isInvite, setInvite] = useState("false")
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
+
+    
+
 
     useEffect(() => {
         if(socket){
@@ -47,6 +51,20 @@ function Room() {
     const onChangeUrl = (e) => {
         setInputYtUrl(e.target.value)
     }
+
+    const removeAllClasses = (element) => {
+        console.log (element)
+        while (element.classList.length > 0) {
+          element.classList.remove(element.classList.item(0));
+        }
+      }
+
+    const changeTheme = (themes) => {
+        console.log ('entrou na função')
+       const theme = document.documentElement
+       removeAllClasses(theme)
+       theme.classList.add(themes)
+    }
     
     return (
         <div className={styles.app}>
@@ -65,8 +83,10 @@ function Room() {
                             <label for="theater">Theater Mode</label>
                         </li>
                         <li>
-                            <input className={styles.gap} type="checkbox" name="dark"></input>
-                            <label for="dark">Dark Mode</label>
+                            <button onClick={() => changeTheme('light-mode')}>Light Mode</button>
+                        </li>
+                        <li>
+                            <button onClick={() => changeTheme('')}>Dark Mode</button>
                         </li>
                     </ul>
                 </div>
