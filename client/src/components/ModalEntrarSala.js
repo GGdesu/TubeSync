@@ -42,7 +42,9 @@ export default function ModalEntrarSala({id, isShow, setShow}){
     console.log("allow?", response.allow)
     
     if (response.allow) {
-      navigate('/Room', {code})
+      navigate('/Room', {
+        state: {code: code}
+      })
     } else {
       alert(response.message)
       

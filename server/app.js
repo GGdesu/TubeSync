@@ -215,46 +215,43 @@ roomNSP.on("connection", (socket) => {
 
   socket.on("message", data => {
 
-    //getUsers()
-    console.log(socket.data.username)
-    console.log(socket.data.room)
     roomNSP.in(socket.data.room).emit('responseMessage', {
       text: data,
       id: socket.id,
       username: `user-${socket.id.substring(0, 3)}`,
-      timestamp: new Date().toLocaleTimeString([],{hour: "numeric", minute: "numeric"})
-      }
+      timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "numeric" })
+    }
     )
 
-    socket.broadcast.emit("responseMessage", {
+    /*socket.broadcast.emit("responseMessage", {
       text: data,
       id: socket.id,
       username: `user-${socket.id.substring(0, 3)}`,
       timestamp: new Date().toLocaleTimeString([], {hour: "numeric", minute: "numeric"})
     })
+  })*/
+
   })
 
+  const updateUsersRoom = async (roomID, roomNSP) => {
+    const users = await getUsers(roomID)
+    console.log("lista de user: ", users)
+    roomNSP.in(roomID).emit("updateUsersRoom", users)
+
+  }
+
+  const getUsers = async (roomID) => {
+    const sockets = await roomNSP.in(roomID).fetchSockets()
+    let users = []
+    sockets.forEach((socket) => {
+      let user = { username: socket.data.username, admin: socket.data.admin }
+      users.push(user)
+      console.log("user: " + user.username)
+    })
+
+    return users
+  }
 })
-
-const updateUsersRoom = async (roomID, roomNSP) => {
-  const users = await getUsers(roomID)
-  console.log("lista de user: ", users)
-  roomNSP.in(roomID).emit("updateUsersRoom", users)
-
-}
-
-const getUsers = async (roomID) => {
-  const sockets = await roomNSP.in(roomID).fetchSockets()
-  let users = []
-  sockets.forEach((socket) => {
-    let user = { username: socket.data.username, admin: socket.data.admin }
-    users.push(user)
-    console.log("user: " + user.username)
-  })
-
-  return users
-}
-
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
 
