@@ -1,7 +1,7 @@
 import express from "express"
 import { createServer } from "http"
 import { Server, Socket } from "socket.io"
-import { makeID } from "./utils/Util.js"
+import { generateId } from "./utils/Util.js"
 
 const PORT = process.env.PORT || 4001
 import router from "./routes/index.js"
@@ -95,9 +95,9 @@ roomNSP.on("connection", (socket) => {
   //listeners para a criacao das salas
   socket.on("createRoom", (username, callback) => {
     try {
-      let ID = makeID(4)
+      let ID = generateId()
       while (roomNSP.adapter.rooms.has(ID)) {
-        ID = makeID(4)
+        ID = generateId()
       }
       //alguns atributos para o usuario
       socket.data.username = username
@@ -124,9 +124,8 @@ roomNSP.on("connection", (socket) => {
       console.log("não foi possivel criar a sala, error: ", error)
     }
 
-
-
   });
+  
 
   socket.on("joinRoom", (data, callback) => {
 
@@ -167,6 +166,26 @@ roomNSP.on("connection", (socket) => {
     })
     //updateUsersRoom(socket.data.room, roomNSP)
   });
+
+  socket.on("checkIfBelong", callback => {
+    try {
+      if(typeof socket.data.room === 'undefined'){
+        
+        callback({
+          allow: false,
+          msg: "Usuário não pertence a essa sala"
+        })
+      }else{
+        callback({
+          allow: true,
+          msg: "O usuário pertence a essa sala"
+        })
+      }
+
+    } catch (error) {
+      console.log("erro ao checar usuario: ", error)
+    }
+  })
 
   socket.on("leaveRoom", () => {
     let roomID = socket.data.room
@@ -222,14 +241,6 @@ roomNSP.on("connection", (socket) => {
       timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "numeric" })
     }
     )
-
-    /*socket.broadcast.emit("responseMessage", {
-      text: data,
-      id: socket.id,
-      username: `user-${socket.id.substring(0, 3)}`,
-      timestamp: new Date().toLocaleTimeString([], {hour: "numeric", minute: "numeric"})
-    })
-  })*/
 
   })
 
