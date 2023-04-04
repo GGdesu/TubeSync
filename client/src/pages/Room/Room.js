@@ -1,6 +1,6 @@
 import styles from './Room.module.css'
-import { Link } from 'react-router-dom';
-import React, { useState, useContext, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
 import add from '../../assets/add.png'
@@ -13,24 +13,17 @@ import { SocketContext } from '../../context/Socket';
 
 
 function Room() {
-    const socket = useContext(SocketContext)
     const [isInfo, setInfo] = useState("false")
     const [isSettings, setSettings] = useState("false")
     const [isInvite, setInvite] = useState("false")
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
 
+    const location = useLocation()
+    //usar para mostrar no botão de codigo da sala
+    const code = location.state.code
+    const socket = useContext(SocketContext)
     
-
-
-    useEffect(() => {
-        if(socket){
-            socket.on('updateUrl', url => {
-                console.log("chegou o link ", url)
-                setUrl(url)
-            })
-        }
-    }, [socket])
 
     const infoToggle = () => {
         setInfo(!isInfo);
@@ -38,17 +31,25 @@ function Room() {
    
     const handleUrl = (e) => {
         e.preventDefault() 
-        if(ytUrlHandler(inputYtUrl) === ""){
+        //socket.emit("updateUsers")
+        console.log("entrou no handle url")
+        let newURL = ytUrlHandler(inputYtUrl)
+        console.log("novo url ", newURL)
+        if(newURL === ""){
             alert("Invalid Link!")
+        }else if(newURL === url){
+            console.log("Esse video já está carregado")
         }else{
-            let url = ytUrlHandler(inputYtUrl)
-            setUrl(url)
-            socket.emit('changeUrl', url)
+            console.log("else")
+            setUrl(newURL)
+            socket.emit("changeUrl", newURL)
+            
         }
         
     }
 
     const onChangeUrl = (e) => {
+        //console.log("id no room", socket.data.username)
         setInputYtUrl(e.target.value)
     }
 
@@ -65,12 +66,66 @@ function Room() {
        removeAllClasses(theme)
        theme.classList.add(themes)
     }
+    const leaveRoom = () => {
+        //provavelmente isso vai dar erro, pois os atributos do socket
+        //apenas podem ser usados no servidor
+        socket.emit("leaveRoom")
+    }
+
+
+    //irá rodar apenas no primeiro render e requisitará algumas informaçoes do servidor
+    useEffect(() =>{
+        //user vai emitir para avisar que entrou e atualizar os membros da sala
+        socket.emit("userJoined")
+        socket.emit("firstTimeGetUrl", url, (response) =>{
+            console.log("url recebido ", response)
+            if(response.hasChange){
+                setUrl(response.url)
+            }
+            
+        })
+        
+        /*socket.on("firstRenderUpdateUser", (UsersInfo) =>{
+            UsersInfo.forEach( user => {
+                console.log("info: ", user)
+            });
+        })*/
+    }, [])
+
+    
+
+    useEffect(() => {
+        if(socket){
+            socket.on('updateUrl', url => {
+                
+                console.log("chegou o link ", url)
+                setUrl(url)
+            })
+            
+            /*socket.on("userLeaveMsg", (msg) => {
+                console.log(msg)
+            })
+
+            socket.on("UserJoinMsg", msg => {
+                console.log(msg)
+            })*/
+            //setCount((count) => count+1)
+            //console.log(count)
+            
+            //antes estava no chat, mas coloquei aqui, provavelmente fique aqui
+            socket.on("updateUsersRoom", (users) => {
+                //console.log("usuario: ", msg)
+                console.log("update: ", users)
+            })
+
+        }
+    }, [socket])
     
     return (
         <div className={styles.app}>
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
-                    <Link to="/"><h1>TubeSync</h1> </Link>
+                    <Link onClick={() => leaveRoom()} to="/"><h1>TubeSync</h1> </Link>
                 </div>
                 <div className={styles.headerRight}>
                     <button href="#" onClick={() => setSettings(!isSettings)}><img src={settings} alt="settings" /></button>

@@ -1,8 +1,6 @@
 import styles from './Home.module.css'
-import Modal from '../../components/Modal'
-import { Link, useNavigate } from 'react-router-dom';
-import React, {useState, useEffect, useContext} from 'react'
-
+import { Link} from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react'
 
 import youtube from '../../assets/youtube.png'
 import facebook from '../../assets/facebook.png'
@@ -15,16 +13,15 @@ import room from '../../assets/room.png'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import { SocketContext } from '../../context/Socket';
+import ModalCriarSala from '../../components/ModalCriarSala';
+import ModalEntrarSala from '../../components/ModalEntrarSala';
 
 function Home() {
   const [showCriar, setShowCriar] = useState(false)
   const [showEntrar, setShowEntrar] = useState(false)
 
-  
-  const navigate = useNavigate();
-
-  useEffect(()=>{
-    AOS.init({duration: 2000});
+  useEffect(() => {
+    AOS.init({ duration: 2000 });
   })
 
   const socket = useContext(SocketContext)
@@ -32,7 +29,7 @@ function Home() {
 
   // Cria o socket uma vez quando o componente é montado
   useEffect(() => {
-    
+
     socket.on('connect', () => {
       console.log("Client: Connect! " + socket.id)
       //console.log(newSocket)
@@ -46,23 +43,7 @@ function Home() {
       console.log("Client: Disconnect! " + socket.id)
       //setConnected(false)
     })
-
-    //setSocket(socket);
-
-    // Retorna uma função de limpeza que desconecta o socket quando o componente é desmontado
-    /*return () => {
-      socket.disconnect();
-      //setSocket(null);
-      //setConnected(false);
-    };*/
   }, []);
-
-  const criarSala = () =>{
-    navigate('/Room')
-  }
-  const entrarSala = () =>{
-    navigate('/Room')
-  }
 
   return (
     <div className={styles.app}>
@@ -74,17 +55,8 @@ function Home() {
           <a href="#" onClick={() => setShowCriar(true)}>Criar Sala</a>
           <a href="#" onClick={() => setShowEntrar(true)}>Entrar</a>
         </div>
-        <Modal id="criarSala" isShow={showCriar} setShow={() => setShowCriar(!showCriar)}>
-          <h2 className={styles.titulo}>Criar Sala</h2>
-          <input id="nome" placeholder='Seu nome' className={styles.input}></input>
-          <button onClick={() => {criarSala()}} className={styles.btn}>Criar</button>
-        </Modal>
-        <Modal id="showEntrar" isShow={showEntrar} setShow={() => setShowEntrar(!showEntrar)}>
-          <h2 className={styles.titulo}>Entrar em uma Sala</h2>
-          <input placeholder='Seu nome' className={styles.input}></input>
-          <input placeholder='Código da Sala' className={styles.input}></input>
-          <button onClick={() => {entrarSala()}} className={styles.btn}>Entrar</button>
-        </Modal>
+        <ModalCriarSala id="criarSala" isShow={showCriar} setShow={() => setShowCriar(!showCriar)}/>
+        <ModalEntrarSala id="showEntrar" isShow={showEntrar} setShow={() => setShowEntrar(!showEntrar)}/>
       </header>
       <div className={styles.banner}>
         <div className={styles.bannerConteudo}>

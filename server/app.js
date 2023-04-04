@@ -1,6 +1,7 @@
 import express from "express"
 import { createServer } from "http"
 import { Server, Socket } from "socket.io"
+import { makeID } from "./utils/Util.js"
 
 const PORT = process.env.PORT || 4001
 import router from "./routes/index.js"
@@ -16,6 +17,8 @@ const io = new Server(server, {
   }
 })
 
+const rooms = {}
+
 //SOCKET QUE IRA CUIDAR DA SINCRONIZACAO, CHAT E GERENCIAMENTOS DAS SALAS
 const roomNSP = io.of("/room");
 
@@ -23,10 +26,59 @@ roomNSP.on("connection", (socket) => {
 
   console.log(`client ${socket.id} connected`)
 
+  //console.log(roomNSP.sockets.s)
+
   //Listeners para a sincronizacao do player
-  socket.on('changeUrl', url => {
+
+  //criar a função de trocar assim que entrar na sala
+  socket.on("firstTimeGetUrl", (url, callback) => {
+    console.log(`id da sala em first time get url ${socket.data.room} do socket ${socket.id} com nome ${socket.data.username}`)
+    try {
+      const roomURL = rooms[socket.data.room].url
+
+      if (roomURL === "") {
+
+        rooms[socket.data.room].url = url
+        console.log("link da sala atualizado!")
+        callback({
+          url: roomURL,
+          hasChange: false
+        })
+      } else if (roomURL === url) {
+        console.log("O link já está atualizado!")
+        callback({
+          url: roomURL,
+          hasChange: false
+        })
+
+      } else {
+        callback({
+          url: roomURL,
+          hasChange: true
+        })
+      }
+
+      console.log("link da sala", rooms[socket.data.room])
+
+    } catch (error) {
+      console.log("O servidor não conseguiu atualizar o link: ", error)
+    }
+
+  })
+
+
+  socket.on('changeUrl', (url) => {
     console.log("link recebido " + url)
-    socket.broadcast.emit('updateUrl', url)
+    const roomURL = rooms[socket.data.room].url
+
+    if (roomURL === "") {
+      rooms[socket.data.room].url = url
+    } else if (url !== roomURL) {
+      rooms[socket.data.room].url = url
+      roomNSP.to(socket.data.room).emit('updateUrl', url)
+    }
+    console.log(rooms[socket.data.room])
+    //socket.broadcast.emit('updateUrl', url)
   })
 
   socket.on("playPauseSync", (data) => {
@@ -41,33 +93,117 @@ roomNSP.on("connection", (socket) => {
   //----------------------------------------------
 
   //listeners para a criacao das salas
-  socket.on("createRoom", () => {
-    let ID = makeID(4)
-    while (roomNSP.adapter.rooms.has(ID)) {
-      ID = makeID(4)
+  socket.on("createRoom", (username, callback) => {
+    try {
+      let ID = makeID(4)
+      while (roomNSP.adapter.rooms.has(ID)) {
+        ID = makeID(4)
+      }
+      //alguns atributos para o usuario
+      socket.data.username = username
+      socket.data.admin = true
+      socket.data.room = ID
+
+
+      socket.join(ID)
+
+      if (!rooms[ID]) {
+        rooms[ID] = {}
+      }
+      //um atributo da sala para guardar o atual url
+      rooms[ID].url = ""
+      callback({
+        allow: true,
+        username: username,
+        roomID: ID
+      })
+      //roomNSP.to(ID).emit("userJoinMsg", "User " + username + "entrou na sala")
+      console.log(`room ${ID} was created`)
+
+    } catch (error) {
+      console.log("não foi possivel criar a sala, error: ", error)
     }
-    socket.join(ID)
-    socket.emit("setID", ID);
-    console.log(`room ${ID} was created`)
+
+
+
   });
 
-  socket.on("joinRoom", (roomID) => {
-    const room = room.adapter.rooms.get(roomID);
+  socket.on("joinRoom", (data, callback) => {
+
+    const room = roomNSP.adapter.rooms.get(data.roomID)
     if (!room) {
       console.log(`room not found`)
-      socket.emit("join_err", "room not found")
-      return;
+      callback({
+        allow: false,
+        message: "Sala não encontrada!"
+      })
+
+      return
     }
-    /*
+
     if (room.size >= 5) {
-      // Room is already full
-      return;
-    }*/
-    socket.join(roomID)
-    const roomSize = room.adapter.rooms.get(roomID).size;
-    room.to(roomID).emit("roomSize", roomSize)
-    socket.emit("roomJoined", roomID, roomSize)
+      console.log("room is already full of users")
+      callback({
+        allow: false,
+        message: "A sala está cheia!"
+      })
+
+      return
+    }
+
+    console.log("joinRoom: ", data)
+
+    socket.data.username = data.username
+    socket.data.admin = false
+    socket.data.room = data.roomID
+
+    //console.log("user: " + socket.data.username + " entrou na sala")
+    socket.join(data.roomID)
+
+    //console.log("room size: ", room.size)
+    callback({
+      allow: true,
+      message: "OK"
+    })
+    //updateUsersRoom(socket.data.room, roomNSP)
   });
+
+  socket.on("leaveRoom", () => {
+    let roomID = socket.data.room
+    socket.to(roomID).emit("userLeaveMsg", `usuário ${socket.data.username} saiu da sala`)
+    socket.leave(roomID)
+    //checar se ele manda a atualização da sala com o usuario que saiu ou ele ja manda sem esse usuário
+    updateUsersRoom(roomID, roomNSP)
+  })
+
+  //quando o usuario entrar na sala, sera notificado a todos atraves de uma msg
+  //todos tambem receberao uma atualizacao dos usuarios na sala
+  socket.on("userJoined", () => {
+    socket.to(socket.data.room).emit("userJoinedMsg", `usuário ${socket.data.username} entrou na sala`)
+    updateUsersRoom(socket.data.room, roomNSP)
+
+  })
+
+  //update user listener provavelmente vai enviar não apenas o nome, como outras infos, tipo se é o admin da sala
+  socket.on("updateUsers", () => {
+    console.log("Updating Users")
+    updateUsersRoom(socket.data.room, roomNSP)
+  })
+
+  socket.on("disconnecting", (reason) => {
+    let rooms = socket.rooms
+    console.log("disconnecting")
+    rooms.forEach(room => {
+      if (room !== socket.id) {
+        //antes de sair, emitir uma sinalização para as salas avisando que está deixando a sala
+        //socket.in(room).emit("userLeaveMsg", "User " + socket.data.username + " Saiu da sala")
+        console.log("room size: ", roomNSP.adapter.rooms.get(room).size)
+        console.log("room: " + room)
+      }
+
+    })
+
+  })
 
   socket.on("disconnect", (reason) => {
     console.log(`server: ${socket.id} disconnected \n${reason}`)
@@ -78,34 +214,45 @@ roomNSP.on("connection", (socket) => {
   console.log(`client ${socket.id} connected to chat`)
 
   socket.on("message", data => {
-    socket.emit('responseMessage', {
+
+    roomNSP.in(socket.data.room).emit('responseMessage', {
       text: data,
       id: socket.id,
       username: `user-${socket.id.substring(0, 3)}`,
-      timestamp: new Date().toLocaleTimeString([],{hour: "numeric", minute: "numeric"})
-      }
+      timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "numeric" })
+    }
     )
 
-    socket.broadcast.emit("responseMessage", {
+    /*socket.broadcast.emit("responseMessage", {
       text: data,
       id: socket.id,
       username: `user-${socket.id.substring(0, 3)}`,
       timestamp: new Date().toLocaleTimeString([], {hour: "numeric", minute: "numeric"})
     })
-  })
-})
+  })*/
 
-  function makeID(length) {
-    var result = "";
-    var characters = "0123456789";
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
+  })
+
+  const updateUsersRoom = async (roomID, roomNSP) => {
+    const users = await getUsers(roomID)
+    console.log("lista de user: ", users)
+    roomNSP.in(roomID).emit("updateUsersRoom", users)
+
   }
 
-  server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+  const getUsers = async (roomID) => {
+    const sockets = await roomNSP.in(roomID).fetchSockets()
+    let users = []
+    sockets.forEach((socket) => {
+      let user = { username: socket.data.username, admin: socket.data.admin }
+      users.push(user)
+      console.log("user: " + user.username)
+    })
+
+    return users
+  }
+})
+server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
 
 
