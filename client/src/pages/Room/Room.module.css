@@ -9,7 +9,8 @@
 
 .hide {
     height: 0 !important;
-    padding-bottom: 0 !important;
+    padding: 0 !important;
+    display: none;
 }
 
 /*---------- header -------------*/
@@ -164,10 +165,12 @@ input{
     border-radius: 5px 5px 0 0;
 }
 .infoBody{
+    padding: 20px;
     overflow: hidden;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
     align-items: center;
     color: var(--infoBody-color);
     transition: all 0.4s ease-in-out;

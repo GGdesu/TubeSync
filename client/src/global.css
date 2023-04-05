@@ -39,6 +39,8 @@ li{
     --chatBody-bg: #202020;
     --chatContainerInput-bg: #202020;
     --chatInput-bg: #fff;
+    --rosaChoque: #E4105D;
+    --dourado: #daa520;
 }
 
 .light-mode:root {

@@ -17,6 +17,7 @@ function Room() {
     const [isInvite, setInvite] = useState("false")
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
+    const [users, setUsers] = useState()
 
     const location = useLocation()
     //usar para mostrar no botão de codigo da sala
@@ -101,6 +102,7 @@ function Room() {
             //antes estava no chat, mas coloquei aqui, provavelmente fique aqui
             socket.on("updateUsersRoom", (users) => {
                 //console.log("usuario: ", msg)
+                setUsers(users)
                 console.log("update: ", users)
             })
 
@@ -137,11 +139,6 @@ function Room() {
                 <div className={styles.bodyLeft}>
                     <div className={styles.container}>
                         <div id='parentPlayer'  className={styles.video}>
-                            {/* <video id='myvid' width="100%" height="100%" src={video} controls></video> */}
-                            {/* <PlyrPlayer /> */}
-                            {/*  { <PlyrPlayer />} */}
-                            {/* <ReactPlayer controls={true} url={"https://www.youtube.com/watch?v=Sus6ILsmJW4"}/> */}
-                            {/* <VideoPlayer url={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"}/> */}
                             <YoutubeReact  url={url}/>
                         </div>
                         <form onSubmit={handleUrl} className={styles.search}>
@@ -149,10 +146,7 @@ function Room() {
                             <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
                         </form>
                     </div>
-                    <RoomInfo
-                        isInfo={isInfo}
-                        infoToggle={infoToggle}
-                    />
+                    <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users}/>
                 </div>
                 <div className={styles.bodyRight}>
                     <ChatClient/>
