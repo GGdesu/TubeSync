@@ -123,7 +123,7 @@ button{
 	padding: 0;
 	font: inherit;
 	cursor: pointer;
-	outline: inherit;
+	/* outline: inherit; */
 }
 
 .search input{
@@ -264,3 +264,74 @@ input{
     font-size: 0.7rem;
     margin-top: 3px;
   }
+
+/*------------ invite-modal -------------*/
+.label {
+    padding:10px;
+    font-size:25px;
+    color:#fff;
+}
+.copytxt {
+    padding: 5px;
+    margin: 0;
+    position:relative;
+    /* padding:px; */
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:10px;
+    display:flex;
+    justify-content: space-around;
+    vertical-align: middle;
+    width: 80%;
+}
+.inputCopy {
+    font-size:23px;
+    color: #555555;
+    align-self: center;
+    width: 80%;
+}
+.button {
+    padding:10px;
+    background:#5784f5;
+    /* color:#fff; */
+    /* border:none;
+    outline:none;*/
+    border-radius:10px; 
+    cursor:pointer;
+}
+
+/* 
+.button:active {
+    background:#809ce2;
+}
+.button.active:before {
+  content: "Copied";
+  display: block;
+  position: absolute;
+  top: -45px;
+  right: 0px;
+  background: #5c81dc;
+  padding: 8px 10px;
+  border-radius: 20px;
+  font-size: 15px;
+  display: none;
+}
+
+.button.:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -20px;
+  right: 25px;
+  width: 10px;
+  height: 10px;
+  background: #5c81dc;
+  transform: rotate(45deg);
+  display: none;
+}
+.button.active:before,
+.button.active:after {
+    display:block;
+} */
+
+
