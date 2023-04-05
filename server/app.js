@@ -210,7 +210,7 @@ roomNSP.on("connection", (socket) => {
   })
   //----------------------------------------------------------------
 
-  //listeners para o chat de mensagens
+  //listener para o chat de mensagens
   console.log(`client ${socket.id} connected to chat`)
 
   socket.on("message", data => {
@@ -218,19 +218,10 @@ roomNSP.on("connection", (socket) => {
     roomNSP.in(socket.data.room).emit('responseMessage', {
       text: data,
       id: socket.id,
-      username: `user-${socket.id.substring(0, 3)}`,
+      username: socket.data.username,
       timestamp: new Date().toLocaleTimeString([], { hour: "numeric", minute: "numeric" })
     }
     )
-
-    /*socket.broadcast.emit("responseMessage", {
-      text: data,
-      id: socket.id,
-      username: `user-${socket.id.substring(0, 3)}`,
-      timestamp: new Date().toLocaleTimeString([], {hour: "numeric", minute: "numeric"})
-    })
-  })*/
-
   })
 
   const updateUsersRoom = async (roomID, roomNSP) => {
