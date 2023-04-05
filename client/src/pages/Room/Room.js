@@ -4,17 +4,18 @@ import React, { useContext, useEffect, useState } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
 import add from '../../assets/add.png'
+import copy from '../../assets/copy-white.png'
 import YoutubeReact from '../../components/YoutubeReact';
 import ytUrlHandler from '../../utils/UrlHandler';
 import ChatClient from '../../components/Chat';
 import RoomInfo from '../../components/RoomInfo';
 import { SocketContext } from '../../context/Socket';
-
+import Modal from '../../components/Modal';
 
 function Room() {
     const [isInfo, setInfo] = useState("false")
     const [isSettings, setSettings] = useState("false")
-    const [isInvite, setInvite] = useState("false")
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
 
@@ -57,7 +58,10 @@ function Room() {
         //apenas podem ser usados no servidor
         socket.emit("leaveRoom")
     }
-
+    function copyText() {
+        var roomCode = code
+        navigator.clipboard.writeText(roomCode);
+      }
 
     //irá rodar apenas no primeiro render e requisitará algumas informaçoes do servidor
     useEffect(() =>{
@@ -78,7 +82,7 @@ function Room() {
         })*/
     }, [])
 
-    
+
 
     useEffect(() => {
         if(socket){
@@ -115,7 +119,15 @@ function Room() {
                 </div>
                 <div className={styles.headerRight}>
                     <button href="#" onClick={() => setSettings(!isSettings)}><img src={settings} alt="settings" /></button>
-                    <button href="#" onClick={() => setInvite(!isInvite)}><img src={add} alt="add" /></button>
+                    <button href="#" onClick={()=> setIsModalOpen(!isModalOpen)}><img src={add} alt="add" /></button>
+                    <Modal id="modal" isShow={isModalOpen} setShow={()=>setIsModalOpen(!isModalOpen)}>
+                        <h2 className={styles.label}>Compartilhe o código:</h2>
+                        <div className={styles.copytxt}>
+                            <p className={styles.inputCopy}>{code}</p>
+                            <img className={styles.button} onClick={()=> {copyText()}} src={copy} alt="copy link"  />
+                        </div>
+
+                    </Modal>
                 </div>
                 <div className={`${styles.roomSettings} ${isSettings ? styles.hide : ""}`}>
                     <ul>
@@ -128,9 +140,6 @@ function Room() {
                             <label for="dark">Dark Mode</label>
                         </li>
                     </ul>
-                </div>
-                <div className={`${styles.inviteSettings} ${isInvite ? styles.hide : ""}`}>
-                    <button>Copy Link</button>
                 </div>
             </header>
             <div className={styles.body}>
