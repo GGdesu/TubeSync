@@ -57,18 +57,13 @@ function ChatClient () {
             })
 
             socket.on('userLeaveMsg', msg => {
-                //por enquanto vai sor printar no console
                 console.log("CHAT: ", msg)
             })
 
             socket.on('userJoinMsg', msg => {
-                //por enquanto n vai ser tratada
                 console.log("CHAT: ", msg)
             })
 
-            /*socket.on("updateUsersRoom", data => {
-                console.log("update: ", data)
-            })*/
             return () => socket.off('responseMessage')
         }
     }, [socket]);

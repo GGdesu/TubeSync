@@ -69,26 +69,31 @@ roomNSP.on("connection", (socket) => {
 
   socket.on('changeUrl', (url) => {
     console.log("link recebido " + url)
+
+    //pega o a informação de url que a sala tem no servidor
     const roomURL = rooms[socket.data.room].url
 
+    //caso seja uma string vazia, ela vai adicionar o novo link recebido ao atributo "url" da sala no objeto rooms
+    // e não vai retorna o valor através de um broadcast
     if (roomURL === "") {
       rooms[socket.data.room].url = url
     } else if (url !== roomURL) {
       rooms[socket.data.room].url = url
       roomNSP.to(socket.data.room).emit('updateUrl', url)
     }
+    //imprime o url da sala no servidor, para fins de visualização e entendimento do que foi feito
     console.log(rooms[socket.data.room])
-    //socket.broadcast.emit('updateUrl', url)
+    
   })
 
   socket.on("playPauseSync", (data) => {
     console.log("playPauseSync data: ", data)
-    socket.broadcast.emit("responsePlayPauseSync", data)
+    socket.to(socket.data.room).emit("responsePlayPauseSync", data)
   });
 
   socket.on("seekSync", (data) => {
     console.log("seekSync data: ", data)
-    socket.broadcast.emit("responseSeekSync", data)
+    socket.to(socket.data.room).emit("responseSeekSync", data)
   });
   //----------------------------------------------
 
@@ -117,7 +122,6 @@ roomNSP.on("connection", (socket) => {
         username: username,
         roomID: ID
       })
-      //roomNSP.to(ID).emit("userJoinMsg", "User " + username + "entrou na sala")
       console.log(`room ${ID} was created`)
 
     } catch (error) {
@@ -155,16 +159,13 @@ roomNSP.on("connection", (socket) => {
     socket.data.username = data.username
     socket.data.admin = false
     socket.data.room = data.roomID
-
-    //console.log("user: " + socket.data.username + " entrou na sala")
+    
     socket.join(data.roomID)
 
-    //console.log("room size: ", room.size)
     callback({
       allow: true,
       message: "OK"
     })
-    //updateUsersRoom(socket.data.room, roomNSP)
   });
 
   socket.on("checkIfBelong", callback => {

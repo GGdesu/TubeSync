@@ -32,16 +32,12 @@ function Home() {
 
     socket.on('connect', () => {
       console.log("Client: Connect! " + socket.id)
-      //console.log(newSocket)
-      //teste para ver se a sala funcionava
-      //createRoom(newSocket)
-      //setConnected(true)
+      
     })
 
 
     socket.on('disconnect', () => {
       console.log("Client: Disconnect! " + socket.id)
-      //setConnected(false)
     })
   }, []);
 

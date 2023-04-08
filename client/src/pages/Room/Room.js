@@ -1,5 +1,5 @@
 import styles from './Room.module.css'
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, redirect } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
@@ -22,29 +22,27 @@ function Room() {
     //usar para mostrar no botão de codigo da sala
     const code = location.state.code
     const socket = useContext(SocketContext)
-    
+
 
     const infoToggle = () => {
         setInfo(!isInfo);
     };
-   
+
     const handleUrl = (e) => {
-        e.preventDefault() 
-        //socket.emit("updateUsers")
-        console.log("entrou no handle url")
+        e.preventDefault()
+
         let newURL = ytUrlHandler(inputYtUrl)
         console.log("novo url ", newURL)
-        if(newURL === ""){
+        if (newURL === "") {
             alert("Invalid Link!")
-        }else if(newURL === url){
+        } else if (newURL === url) {
             console.log("Esse video já está carregado")
-        }else{
-            console.log("else")
+        } else {
             setUrl(newURL)
             socket.emit("changeUrl", newURL)
-            
+
         }
-        
+
     }
 
     const onChangeUrl = (e) => {
@@ -53,41 +51,57 @@ function Room() {
     }
 
     const leaveRoom = () => {
-        //provavelmente isso vai dar erro, pois os atributos do socket
-        //apenas podem ser usados no servidor
         socket.emit("leaveRoom")
+    }
+
+    const firstTimeRender = async () => {
+
+        let res = await socket.emitWithAck("checkIfBelong")
+        console.log(res.msg)
+        if (res.allow) {
+            //pede para o servidor notificar aos outros usuários que ele entrou na sala 
+            //e pede para enviar uma lista atualizada dos usuários na sala
+            socket.emit("userJoined")
+            //pede para o servidor mandar caso tenha um link de video atualizado
+            socket.emit("firstTimeGetUrl", url, (response) => {
+                console.log("url recebido ", response)
+                if (response.hasChange) {
+                    setUrl(response.url)
+                }
+                console.log(res.allow)
+                return res.allow
+            })
+        } else {
+            console.log(res.allow)
+            return res.allow
+        }
+
     }
 
 
     //irá rodar apenas no primeiro render e requisitará algumas informaçoes do servidor
-    useEffect(() =>{
+    useEffect(() => {
         //user vai emitir para avisar que entrou e atualizar os membros da sala
-        socket.emit("userJoined")
-        socket.emit("firstTimeGetUrl", url, (response) =>{
-            console.log("url recebido ", response)
-            if(response.hasChange){
-                setUrl(response.url)
-            }
-            
-        })
-        
-        /*socket.on("firstRenderUpdateUser", (UsersInfo) =>{
-            UsersInfo.forEach( user => {
-                console.log("info: ", user)
-            });
-        })*/
+        firstTimeRender()
+
     }, [])
 
-    
 
+    //irá rodar sempre que a variavel socket sofrer alguma alteração
     useEffect(() => {
-        if(socket){
+        if (socket) {
             socket.on('updateUrl', url => {
-                
+
                 console.log("chegou o link ", url)
                 setUrl(url)
             })
-            
+
+            //usar isso aqui pra monitorar se o usuário se conectará após recarregar a pagina room
+            socket.on("connect", () => {
+                console.log(`socket ${socket.id} se conectou apartir da sala room`)
+                //logica para fazer ele ir para a pagina home
+            })
+
             /*socket.on("userLeaveMsg", (msg) => {
                 console.log(msg)
             })
@@ -95,19 +109,17 @@ function Room() {
             socket.on("UserJoinMsg", msg => {
                 console.log(msg)
             })*/
-            //setCount((count) => count+1)
-            //console.log(count)
-            
-            //antes estava no chat, mas coloquei aqui, provavelmente fique aqui
+
             socket.on("updateUsersRoom", (users) => {
-                //console.log("usuario: ", msg)
                 console.log("update: ", users)
             })
 
         }
     }, [socket])
-    
+
     return (
+        <>{
+            firstTimeRender && (
         <div className={styles.app}>
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
@@ -136,13 +148,13 @@ function Room() {
             <div className={styles.body}>
                 <div className={styles.bodyLeft}>
                     <div className={styles.container}>
-                        <div id='parentPlayer'  className={styles.video}>
+                        <div id='parentPlayer' className={styles.video}>
                             {/* <video id='myvid' width="100%" height="100%" src={video} controls></video> */}
                             {/* <PlyrPlayer /> */}
                             {/*  { <PlyrPlayer />} */}
                             {/* <ReactPlayer controls={true} url={"https://www.youtube.com/watch?v=Sus6ILsmJW4"}/> */}
                             {/* <VideoPlayer url={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"}/> */}
-                            <YoutubeReact  url={url}/>
+                            <YoutubeReact url={url} />
                         </div>
                         <form onSubmit={handleUrl} className={styles.search}>
                             <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
@@ -155,10 +167,12 @@ function Room() {
                     />
                 </div>
                 <div className={styles.bodyRight}>
-                    <ChatClient/>
+                    <ChatClient />
                 </div>
             </div>
-        </div>
+        </div >
+    )}  </>
+        
     );
 }
 

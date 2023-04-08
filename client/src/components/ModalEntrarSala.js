@@ -30,27 +30,21 @@ export default function ModalEntrarSala({id, isShow, setShow}){
     })
 
     return emitResponse
-
-
   }
 
   const entrarSala = async (e) => {
-    
     e.preventDefault()
 
     let response = await isAllowed(socket)
-    console.log("allow?", response.allow)
-    
+    console.log("allow? ", response.allow)
     if (response.allow) {
-      navigate('/Room', {
+      navigate('/room', {
         state: {code: code}
       })
     } else {
       alert(response.message)
       
     }
-    
-
   }
   
   if(isShow){
