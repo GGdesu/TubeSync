@@ -78,8 +78,8 @@ function ChatClient () {
                 {
                     messageList.map((message, index) => (
                     <div className={`${styles["messageContainer"]} ${message.id === socket.id && styles["myMessage"]}`} key={index}>
-                        <div className="message-author"><strong>{message.username}</strong></div>
-                        <div className="myMessage">{message.text}</div>
+                        <div className={styles.messageAuthor}><strong>{message.username}</strong></div>
+                        <div>{message.text}</div>
                         <div className={styles.messageTimestamp}>{message.timestamp}</div>
                     </div>
                     )) 

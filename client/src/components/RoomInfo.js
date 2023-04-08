@@ -1,14 +1,25 @@
 import React from 'react';
 import styles from '../pages/Room/Room.module.css';
+import Card from './Card';
 
-function RoomInfo({isInfo, infoToggle }) {
+
+function RoomInfo({isInfo, infoToggle, users}) {
+  const lista = users
+  
   return (
     <div className={styles.roomInfo}>
       <div className={styles.infoHeader} onClick={infoToggle}>
         <h3>Room info</h3>
       </div>
       <div className={`${styles.infoBody} ${isInfo ? styles.hide : ""}`}>
-        <h3>Informações</h3>
+        {
+          lista && (
+            lista.map((elem) =>
+              <li><Card nome={elem.username} admin={elem.admin}/></li>
+            )
+          )
+          
+        }
       </div>
     </div>
   );

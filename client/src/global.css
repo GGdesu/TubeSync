@@ -25,6 +25,7 @@ li{
     --roomSettings-bg: #151515;
     --inviteSettings-bg: #151515;
     --body-bg: #1E192C;
+    --my-Message: #1E192C;
     --search-border-bottom-color: #FA00FF;
     --searchInput-bg: #1E192C;
     --searchInput-color: #B6B6B6;
@@ -39,6 +40,9 @@ li{
     --chatBody-bg: #202020;
     --chatContainerInput-bg: #202020;
     --chatInput-bg: #fff;
+    --message-Container:#E4105D;
+    --rosaChoque: #E4105D;
+    --dourado: #daa520;
 }
 
 .light-mode:root {

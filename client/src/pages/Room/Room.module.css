@@ -9,7 +9,8 @@
 
 .hide {
     height: 0 !important;
-    padding-bottom: 0 !important;
+    padding: 0 !important;
+    display: none;
 }
 
 /*---------- header -------------*/
@@ -122,7 +123,7 @@ button{
 	padding: 0;
 	font: inherit;
 	cursor: pointer;
-	outline: inherit;
+	/* outline: inherit; */
 }
 
 .search input{
@@ -164,10 +165,12 @@ input{
     border-radius: 5px 5px 0 0;
 }
 .infoBody{
+    padding: 20px;
     overflow: hidden;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
     align-items: center;
     color: var(--infoBody-color);
     transition: all 0.4s ease-in-out;
@@ -223,6 +226,7 @@ input{
     transition: all 0.4s ease-in-out;
     height: 50px;
     background-color: var(--chatContainerInput-bg);
+    padding-top: 5px;
 }
 
 .chatInput{
@@ -240,9 +244,11 @@ input{
 }
 
 .messageContainer{
+    word-wrap: break-word;
+    min-width: 100px;
     max-width: 250px;
     width: fit-content;
-    background-color: rgb(0, 0, 0);
+    background-color: var(--message-Container);
     margin-top: 5px;
     margin-left: 10px;
     padding: 5px 10px;
@@ -254,10 +260,87 @@ input{
 .myMessage {
     margin-right: 10px;
     align-self: end;
-    background-color: rgb(153, 153, 153);
+    background-color: var(--my-Message);
 }
 
+.messageAuthor{
+    padding-bottom: 10px;
+}
 .messageTimestamp {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
     font-size: 0.7rem;
-    margin-top: 3px;
-  }
+    margin-top: 10px;
+}
+
+/*------------ invite-modal -------------*/
+.label {
+    padding:10px;
+    font-size:25px;
+    color:#fff;
+}
+.copytxt {
+    padding: 5px;
+    margin: 0;
+    position:relative;
+    /* padding:px; */
+    background:#fff;
+    border:1px solid #ddd;
+    border-radius:10px;
+    display:flex;
+    justify-content: space-around;
+    vertical-align: middle;
+    width: 80%;
+}
+.inputCopy {
+    font-size:23px;
+    color: #555555;
+    align-self: center;
+    width: 80%;
+}
+.button {
+    padding:10px;
+    background:#5784f5;
+    /* color:#fff; */
+    /* border:none;
+    outline:none;*/
+    border-radius:10px; 
+    cursor:pointer;
+}
+
+/* 
+.button:active {
+    background:#809ce2;
+}
+.button.active:before {
+  content: "Copied";
+  display: block;
+  position: absolute;
+  top: -45px;
+  right: 0px;
+  background: #5c81dc;
+  padding: 8px 10px;
+  border-radius: 20px;
+  font-size: 15px;
+  display: none;
+}
+
+.button.:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -20px;
+  right: 25px;
+  width: 10px;
+  height: 10px;
+  background: #5c81dc;
+  transform: rotate(45deg);
+  display: none;
+}
+.button.active:before,
+.button.active:after {
+    display:block;
+} */
+
+
