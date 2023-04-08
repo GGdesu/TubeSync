@@ -1,5 +1,5 @@
 import styles from './Room.module.css'
-import { Link, useLocation, redirect } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
@@ -20,10 +20,13 @@ function Room() {
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
     const [users, setUsers] = useState()
+    const [allowRender, setAllowRender] = useState(true)
+    const [code, setCode] = useState()
 
     const location = useLocation()
+    const navigate = useNavigate()
     //usar para mostrar no botão de codigo da sala
-    const code = location.state.code
+    //const code = location.state.code !== null ? location.state.code : "none"
     const socket = useContext(SocketContext)
 
 
@@ -67,12 +70,14 @@ function Room() {
        theme.classList.add(themes)
     }
     const leaveRoom = () => {
-        socket.emit("leaveRoom")
+        socket.emit("leaveRoom" )
     }
 
     const firstTimeRender = async () => {
 
         let res = await socket.emitWithAck("checkIfBelong")
+        
+        
         console.log(res.msg)
         if (res.allow) {
             //pede para o servidor notificar aos outros usuários que ele entrou na sala 
@@ -85,10 +90,15 @@ function Room() {
                     setUrl(response.url)
                 }
                 console.log(res.allow)
+                //coloca a resposta que vai decider se vai poder renderizar a sala ou não
+                setAllowRender(res.allow)
+                //adiciona o codigo da sala na variavel code
+                setCode(location.state.code ?? "none")
                 return res.allow
             })
         } else {
             console.log(res.allow)
+            setAllowRender(res.allow)
             return res.allow
         }
 
@@ -119,8 +129,15 @@ function Room() {
 
             //usar isso aqui pra monitorar se o usuário se conectará após recarregar a pagina room
             socket.on("connect", () => {
-                console.log(`socket ${socket.id} se conectou apartir da sala room`)
+                console.log(`socket ${socket.id} se conectou apartir da sala room, logo ele deve ser redirecionado para home`)
+                //criar um roast message ao inves de um alert
+                alert(`socket id: ${socket.id} --- Usuário Não autorizado! clique "OK" para ser redirecionado para a HOMEPAGE`)
+                setAllowRender(false)
                 //logica para fazer ele ir para a pagina home
+            })
+
+            socket.on("disconnect", () => {
+                console.log(`socket ${socket.id} se desconectou apartir da sala room`)
             })
 
             /*socket.on("userLeaveMsg", (msg) => {
@@ -141,7 +158,7 @@ function Room() {
 
     return (
         <>{
-            firstTimeRender && (
+            !allowRender ? <Navigate to="/" /> : (
         <div className={styles.app}>
             <header className={styles.header}>
                 <div className={styles.headerLeft}>
@@ -192,7 +209,7 @@ function Room() {
                 </div>
             </div>
         </div >
-    )}  </>
+    )} </>
         
     );
 }

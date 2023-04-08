@@ -30,10 +30,10 @@ function Home() {
   // Cria o socket uma vez quando o componente é montado
   useEffect(() => {
 
-    socket.on('connect', () => {
+    /*socket.on('connect', () => {
       console.log("Client: Connect! " + socket.id)
       
-    })
+    })*/
 
 
     socket.on('disconnect', () => {
