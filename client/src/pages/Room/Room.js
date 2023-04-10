@@ -30,7 +30,47 @@ function Room() {
     const infoToggle = () => {
         setInfo(!isInfo);
     };
-   
+    const ulInfo = () => {
+        if(window.innerWidth < 800){
+            var chat = document.getElementById("chat")
+            var info = document.getElementById("info")
+            
+            chat.style.display = "flex"
+            info.style.display = "none"   
+        }
+    };
+    const ulChat = () => {
+        if(window.innerWidth < 800){
+            var chat = document.getElementById("chat")
+            var info = document.getElementById("info")
+            
+            chat.style.display = "none"
+            info.style.display = "flex"
+                
+        }
+    };
+    
+    useEffect(() => {
+        function handleResize() {
+            var chat = document.getElementById("chat")
+            var info = document.getElementById("info")
+
+            if(window.innerWidth > 800){
+                chat.style.display = "flex"
+                info.style.display = "flex"
+            }else{
+                chat.style.display = "none"
+                info.style.display = "none"
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+    
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     const handleUrl = (e) => {
         e.preventDefault() 
         //socket.emit("updateUsers")
@@ -97,7 +137,7 @@ function Room() {
         })*/
     }, [])
 
-
+    
 
     useEffect(() => {
         if(socket){
@@ -147,10 +187,10 @@ function Room() {
                 </div>
                 <div className={`${styles.roomSettings} ${isSettings ? styles.hide : ""}`}>
                     <ul>
-                        <li>
+                        {/* <li>
                             <input className={styles.gap} type="checkbox" name="theater"></input>
                             <label for="theater">Theater Mode</label>
-                        </li>
+                        </li> */}
                         <li>
                             <button onClick={() => changeTheme('light-mode')}>Light Mode</button>
                         </li>
@@ -162,18 +202,20 @@ function Room() {
             </header>
             <div className={styles.body}>
                 <div className={styles.bodyLeft}>
-                    <div className={styles.container}>
-                        <div id='parentPlayer'  className={styles.video}>
-                            <YoutubeReact  url={url}/>
-                        </div>
-                        <form onSubmit={handleUrl} className={styles.search}>
-                            <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
-                            <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
-                        </form>
+                    <div id='parentPlayer'  className={styles.video}>
+                        <YoutubeReact  url={url}/>
                     </div>
-                    <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users}/>
+                    <form onSubmit={handleUrl} className={styles.search}>
+                        <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
+                        <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
+                    </form>
+                    <ul>
+                        <li onClick={ulChat}>Room Info</li>
+                        <li onClick={ulInfo}>Chat</li>
+                    </ul>                 
                 </div>
                 <div className={styles.bodyRight}>
+                    <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users}/>
                     <ChatClient/>
                 </div>
             </div>

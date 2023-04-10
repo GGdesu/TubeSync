@@ -50,7 +50,7 @@ export default function ModalCriarSala({ id, isShow, setShow}) {
                     <button onClick={setShow} className={styles.close}>X</button>
                     <form className={formStyles.formModal} onSubmit={criarSala}>
                         <h2 className={formStyles.titulo}>Criar Sala</h2>
-                        <input onChange={onChangeUsername} id="nome" placeholder='Seu nome' className={formStyles.input}></input>
+                        <input onChange={onChangeUsername} id="nome" placeholder='Seu nome' autocomplete="off" className={formStyles.input}></input>
                         {error && <span className={formStyles.error}>{error}</span>}
                         <button type='submit' className={formStyles.btn}>Criar</button>
                     </form>

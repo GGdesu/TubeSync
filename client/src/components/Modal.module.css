@@ -15,8 +15,7 @@
     position: relative;
     padding: 10px 5px 32px 5px;
     height: auto;
-    min-width: 30%;
-    max-width: 45%;
+    width: min(90%, 500px);
     max-height: 90%;
     border-radius: 10px;
     background-color: #1E192C;

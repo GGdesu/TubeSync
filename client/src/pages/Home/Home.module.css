@@ -30,7 +30,7 @@ h1{
   align-items: center;
   font-style: normal;
   font-weight: 700;
-  font-size: 42px;
+  font-size: 102px;
   line-height: 51px;
   display: flex;
   align-items: center;
@@ -114,7 +114,7 @@ h1{
  .bannerConteudo{
   display: flex;
   flex-direction: column;
-  max-width: 50%;
+  max-width: 35%;
   margin-top: 150px;
   margin-left: 20%;
   color: #fff;
@@ -131,7 +131,7 @@ h1{
 }
 
 .bannerButton{
-  width: 15%;
+  width: 140px;
   border: 0px;
   border-radius: 1.5rem;
   padding: 0.6rem 1.5rem;
@@ -168,7 +168,9 @@ h1{
 .body{
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: 2500px;
+  overflow: hidden;
 }
 
 .step{
@@ -177,8 +179,16 @@ h1{
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
+  width: 100%;
+  text-align: center;
 }
 
+.stepLeft{
+  text-align: right;
+}
+.stepRight{
+  text-align: left;
+}
 .container{
   width: 50%;
   display: flex;
@@ -208,14 +218,12 @@ h1{
   height: 500px;
 }
 
-.step2Left{
-  text-align: right;
-}
 /* -------------- step3 ---------------- */
 .step3{
   background-color: #1a1a40;
   height: 500px;
 }
+
 /* -------------- step4 ---------------- */
 .step4{
   background-color: #fff;
@@ -223,9 +231,6 @@ h1{
   color: #000;
 }
 
-.step4Left{
-  text-align: right;
-}
 /* -------------- step5 ---------------- */
 .step5{
   background-color: #1E192C;
@@ -246,4 +251,59 @@ h1{
 .footerImg{
   display: flex;
   gap: 10px;
+}
+
+
+
+/*------------ Responsividade -------------*/
+
+@media only screen and (max-width: 768px) {
+  /* ----- header ----- */
+  .header{
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+  .headerLeft h1{
+    font-size: 32px;
+  }
+
+  .headerRight{
+    font-size: 20px;
+  }
+   /* ----- banner ----- */
+  .banner{
+    background-position: top center;
+  }
+  .bannerConteudo{
+    margin-left: 20%;
+    margin-right: 10%;
+    margin-top: 150px;
+    max-width: none;
+  }
+
+  .bannerTitulo{
+    font-size: 32px;
+  }
+
+  /* ----- body ----- */
+  .step, .container{
+    flex-direction: column;
+  }
+
+  .stepLeft, .stepRight{
+    text-align: center;
+  }
+}
+
+@media only screen and (min-width:768px) and (max-width: 1305px) {
+  .container{
+    width: 75%;
+  }
+  .bannerConteudo{
+    max-width: 50%;
+  }
+  .bannerTitulo{
+    font-size: 42px;
+  }
 }

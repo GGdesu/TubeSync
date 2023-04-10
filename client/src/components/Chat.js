@@ -74,7 +74,7 @@ function ChatClient () {
     }, [socket]);
 
     return (
-        <div className={styles.chat}>
+        <div id="chat" className={styles.chat}>
             <div className={styles.chatHeader} onClick={handleToggle}>
                 <h3>Chat</h3>
                 <img src={menos} alt="close" />

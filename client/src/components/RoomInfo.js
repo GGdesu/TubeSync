@@ -7,7 +7,7 @@ function RoomInfo({isInfo, infoToggle, users}) {
   const lista = users
   
   return (
-    <div className={styles.roomInfo}>
+    <div id="info" className={styles.roomInfo}>
       <div className={styles.infoHeader} onClick={infoToggle}>
         <h3>Room info</h3>
       </div>

@@ -5,7 +5,7 @@
     box-sizing: border-box;
 }
 
-html, body, #root, .app{
+html, body, #root {
     height: 100%;
 }
 
@@ -47,7 +47,7 @@ li{
 
 .light-mode:root {
     --header-bg: #012a4a;
-    --header-color: #000000;
+    --header-color: #fff;
     --roomSettings-bg: #012a4a;
     --inviteSettings-bg: #012a4a;
     --body-bg: #a9d6e5;

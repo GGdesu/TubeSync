@@ -13,6 +13,7 @@
     justify-content: center;
 }
 .userNome{
+    word-wrap: break-word;
     overflow-y: hidden;
     text-align: center;
     border-radius: 0 0 10px 10px;

@@ -94,7 +94,24 @@ h1{
 .bodyLeft{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+}
+
+.bodyLeft ul{
+    display: none;
+}
+
+.bodyLeft ul li{
+    padding: 10px;
+    width: 50%;
+    text-align: center;
+    color: white;
+    background-color: var(--search-border-bottom-color);
+    border: 1px solid #000;
+}
+.bodyLeft ul li:hover{
+    color: white;
+    background-color: var(--rosaChoque);
+    border: 1px solid #000;
 }
 
 .video{
@@ -146,7 +163,11 @@ textarea:focus, input:focus{
 input{
     border-style: none;
 }
+
+/*---------- body-right -------------*/
 .roomInfo{
+    position:fixed;
+    left: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -166,7 +187,8 @@ input{
 }
 .infoBody{
     padding: 20px;
-    overflow: hidden;
+    overflow-y: hidden;
+    overflow-x: auto;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -178,11 +200,11 @@ input{
     width: 100%;
     height: 14vh;
 }
-/*---------- body-right -------------*/
-
 .bodyRight{
+    position: fixed;
+    bottom: 0;
+    right: 0;
     display: flex;
-    flex-grow: 1;
     align-items: flex-end;
     justify-content: flex-end;
 }
@@ -309,6 +331,65 @@ input{
     cursor:pointer;
 }
 
+/*------------ Responsividade -------------*/
+
+@media only screen and (max-width: 800px) {
+    /* header */
+    .headerLeft h1{
+        font-size: 32px;
+    }
+
+    .headerRight{
+        gap: 20px;
+    }
+    /* body */
+    .body{
+        flex-direction: column;
+    }
+    .bodyLeft ul{
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
+    .video, .search{
+        width: 100%;
+        margin: 0;
+    }
+
+    .search input{
+        width: 85vw;
+    }
+
+    .bodyRight{
+        position: relative;
+    }
+    /* roomInfo */
+    .roomInfo{
+        position: relative;
+        display: none;
+        border: 1px solid #000;
+        width: 100vw;
+        margin: 0;
+    }
+
+    .infoHeader{
+        width: 100vw;
+        border-radius: 0;
+    }
+    /* chat */
+    .chat{
+        display: none;
+        width: 100vw;
+        border: 1px solid #000;
+    }
+    .chatHeader{
+        border-radius: 0;
+    }
+    
+    .chatInput input{
+        width: 70%;
+    }
+}
 /* 
 .button:active {
     background:#809ce2;
