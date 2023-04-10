@@ -32,7 +32,7 @@ roomNSP.on("connection", (socket) => {
 
   //criar a função de trocar assim que entrar na sala
   socket.on("firstTimeGetUrl", (url, callback) => {
-    console.log(`id da sala em first time get url ${socket.data.room} do socket ${socket.id} com nome ${socket.data.username}`)
+    //console.log(`id da sala em first time get url ${socket.data.room} do socket ${socket.id} com nome ${socket.data.username}`)
     try {
       const roomURL = rooms[socket.data.room].url
 
@@ -68,22 +68,28 @@ roomNSP.on("connection", (socket) => {
 
 
   socket.on('changeUrl', (url) => {
-    console.log("link recebido " + url)
+    try {
+      console.log("link recebido " + url)
 
-    //pega o a informação de url que a sala tem no servidor
-    const roomURL = rooms[socket.data.room].url
+      //pega o a informação de url que a sala tem no servidor
+      const roomURL = rooms[socket.data.room].url
 
-    //caso seja uma string vazia, ela vai adicionar o novo link recebido ao atributo "url" da sala no objeto rooms
-    // e não vai retorna o valor através de um broadcast
-    if (roomURL === "") {
-      rooms[socket.data.room].url = url
-    } else if (url !== roomURL) {
-      rooms[socket.data.room].url = url
-      roomNSP.to(socket.data.room).emit('updateUrl', url)
+      //caso seja uma string vazia, ela vai adicionar o novo link recebido ao atributo "url" da sala no objeto rooms
+      // e não vai retorna o valor através de um broadcast
+      if (roomURL === "") {
+        rooms[socket.data.room].url = url
+      } else if (url !== roomURL) {
+        rooms[socket.data.room].url = url
+        roomNSP.to(socket.data.room).emit('updateUrl', url)
+      }
+      //imprime o url da sala no servidor, para fins de visualização e entendimento do que foi feito
+      console.log(rooms[socket.data.room])
+
+    } catch (error) {
+      console.log("Erro ao trocar o link do video -- ", error)
     }
-    //imprime o url da sala no servidor, para fins de visualização e entendimento do que foi feito
-    console.log(rooms[socket.data.room])
-    
+
+
   })
 
   socket.on("playPauseSync", (data) => {
@@ -129,7 +135,7 @@ roomNSP.on("connection", (socket) => {
     }
 
   });
-  
+
 
   socket.on("joinRoom", (data, callback) => {
 
@@ -159,7 +165,7 @@ roomNSP.on("connection", (socket) => {
     socket.data.username = data.username
     socket.data.admin = false
     socket.data.room = data.roomID
-    
+
     socket.join(data.roomID)
 
     callback({
@@ -170,13 +176,13 @@ roomNSP.on("connection", (socket) => {
 
   socket.on("checkIfBelong", callback => {
     try {
-      if(typeof socket.data.room === 'undefined'){
-        
+      if (typeof socket.data.room === 'undefined') {
+
         callback({
           allow: false,
           msg: "Usuário não pertence a essa sala"
         })
-      }else{
+      } else {
         callback({
           allow: true,
           msg: "O usuário pertence a essa sala"
@@ -189,11 +195,18 @@ roomNSP.on("connection", (socket) => {
   })
 
   socket.on("leaveRoom", () => {
-    let roomID = socket.data.room
-    socket.to(roomID).emit("userLeaveMsg", `usuário ${socket.data.username} saiu da sala`)
-    socket.leave(roomID)
-    //checar se ele manda a atualização da sala com o usuario que saiu ou ele ja manda sem esse usuário
-    updateUsersRoom(roomID, roomNSP)
+    try {
+      let roomID = socket.data.room
+      socket.to(roomID).emit("userLeaveMsg", `usuário ${socket.data.username} saiu da sala`)
+      socket.leave(roomID)
+      deleteRoom(roomID, roomNSP)
+      
+
+      updateUsersRoom(roomID, roomNSP)
+    } catch (error) {
+      console.log("erro ao sair da sala -- ", error)
+    }
+
   })
 
   //quando o usuario entrar na sala, sera notificado a todos atraves de uma msg
@@ -205,20 +218,34 @@ roomNSP.on("connection", (socket) => {
   })
 
   //update user listener provavelmente vai enviar não apenas o nome, como outras infos, tipo se é o admin da sala
-  socket.on("updateUsers", () => {
+  socket.on("updateUsers", (roomID) => {
     console.log("Updating Users")
-    updateUsersRoom(socket.data.room, roomNSP)
+    if (typeof socket.data.room === 'undefined') {
+      console.log(`vai usar o roomID: ${roomID}`)
+      updateUsersRoom(roomID, roomNSP)
+
+    } else {
+      console.log("vai usar o valor do socket: ", socket.data.room)
+      updateUsersRoom(socket.data.room, roomNSP)
+
+    }
+
   })
 
   socket.on("disconnecting", (reason) => {
-    let rooms = socket.rooms
+    let socketRooms = socket.rooms
     console.log("disconnecting")
-    rooms.forEach(room => {
+    socketRooms.forEach(room => {
       if (room !== socket.id) {
         //antes de sair, emitir uma sinalização para as salas avisando que está deixando a sala
         //socket.in(room).emit("userLeaveMsg", "User " + socket.data.username + " Saiu da sala")
-        console.log("room size: ", roomNSP.adapter.rooms.get(room).size)
-        console.log("room: " + room)
+        //console.log("room size before: ", roomNSP.adapter.rooms.get(room).size)
+        //console.log("room: " + room)
+        setTimeout(() => {
+          deleteRoom(room, roomNSP)
+          updateUsersRoom(room, roomNSP)
+        }, 500);
+        //
       }
 
     })
@@ -245,6 +272,16 @@ roomNSP.on("connection", (socket) => {
 
   })
 
+  const deleteRoom = (roomID, roomNSP) => {
+    const serverRooms = roomNSP.adapter.rooms
+
+    if (typeof serverRooms.get(roomID) === "undefined") {
+      console.log(`A sala sera apagada ${roomID} e o URL de video que ela contem - ${rooms[roomID].url}`)
+      delete rooms[roomID]
+    }
+
+  }
+
   const updateUsersRoom = async (roomID, roomNSP) => {
     const users = await getUsers(roomID)
     console.log("lista de user: ", users)
@@ -258,7 +295,7 @@ roomNSP.on("connection", (socket) => {
     sockets.forEach((socket) => {
       let user = { username: socket.data.username, admin: socket.data.admin }
       users.push(user)
-      console.log("user: " + user.username)
+      //console.log("user: " + user.username)
     })
 
     return users

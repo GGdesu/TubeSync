@@ -57,27 +57,27 @@ function Room() {
     }
 
     const removeAllClasses = (element) => {
-        console.log (element)
+        console.log(element)
         while (element.classList.length > 0) {
-          element.classList.remove(element.classList.item(0));
+            element.classList.remove(element.classList.item(0));
         }
-      }
+    }
 
     const changeTheme = (themes) => {
-        console.log ('entrou na função')
-       const theme = document.documentElement
-       removeAllClasses(theme)
-       theme.classList.add(themes)
+        console.log('entrou na função')
+        const theme = document.documentElement
+        removeAllClasses(theme)
+        theme.classList.add(themes)
     }
     const leaveRoom = () => {
-        socket.emit("leaveRoom" )
+        socket.emit("leaveRoom")
     }
 
     const firstTimeRender = async () => {
 
         let res = await socket.emitWithAck("checkIfBelong")
-        
-        
+
+
         console.log(res.msg)
         if (res.allow) {
             //pede para o servidor notificar aos outros usuários que ele entrou na sala 
@@ -90,10 +90,10 @@ function Room() {
                     setUrl(response.url)
                 }
                 console.log(res.allow)
-                //coloca a resposta que vai decider se vai poder renderizar a sala ou não
-                setAllowRender(res.allow)
                 //adiciona o codigo da sala na variavel code
                 setCode(location.state.code ?? "none")
+                //coloca a resposta que vai decider se vai poder renderizar a sala ou não
+                setAllowRender(res.allow)
                 return res.allow
             })
         } else {
@@ -107,7 +107,7 @@ function Room() {
     function copyText() {
         var roomCode = code
         navigator.clipboard.writeText(roomCode);
-      }
+    }
 
     //irá rodar apenas no primeiro render e requisitará algumas informaçoes do servidor
     useEffect(() => {
@@ -131,14 +131,11 @@ function Room() {
             socket.on("connect", () => {
                 console.log(`socket ${socket.id} se conectou apartir da sala room, logo ele deve ser redirecionado para home`)
                 //criar um roast message ao inves de um alert
-                alert(`socket id: ${socket.id} --- Usuário Não autorizado! clique "OK" para ser redirecionado para a HOMEPAGE`)
+                //alert(`socket id: ${socket.id} --- Usuário Não autorizado! clique "OK" para ser redirecionado para a HOMEPAGE`)
                 setAllowRender(false)
                 //logica para fazer ele ir para a pagina home
             })
 
-            socket.on("disconnect", () => {
-                console.log(`socket ${socket.id} se desconectou apartir da sala room`)
-            })
 
             /*socket.on("userLeaveMsg", (msg) => {
                 console.log(msg)
@@ -159,58 +156,58 @@ function Room() {
     return (
         <>{
             !allowRender ? <Navigate to="/" /> : (
-        <div className={styles.app}>
-            <header className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <Link onClick={() => leaveRoom()} to="/"><h1>TubeSync</h1> </Link>
-                </div>
-                <div className={styles.headerRight}>
-                    <button href="#" onClick={() => setSettings(!isSettings)}><img src={settings} alt="settings" /></button>
-                    <button href="#" onClick={()=> setIsModalOpen(!isModalOpen)}><img src={add} alt="add" /></button>
-                    <Modal id="modal" isShow={isModalOpen} setShow={()=>setIsModalOpen(!isModalOpen)}>
-                        <h2 className={styles.label}>Compartilhe o código:</h2>
-                        <div className={styles.copytxt}>
-                            <p className={styles.inputCopy}>{code}</p>
-                            <img className={styles.button} onClick={()=> {copyText()}} src={copy} alt="copy link"  />
+                <div className={styles.app}>
+                    <header className={styles.header}>
+                        <div className={styles.headerLeft}>
+                            <Link onClick={() => leaveRoom()} to="/"><h1>TubeSync</h1> </Link>
                         </div>
+                        <div className={styles.headerRight}>
+                            <button href="#" onClick={() => setSettings(!isSettings)}><img src={settings} alt="settings" /></button>
+                            <button href="#" onClick={() => setIsModalOpen(!isModalOpen)}><img src={add} alt="add" /></button>
+                            <Modal id="modal" isShow={isModalOpen} setShow={() => setIsModalOpen(!isModalOpen)}>
+                                <h2 className={styles.label}>Compartilhe o código:</h2>
+                                <div className={styles.copytxt}>
+                                    <p className={styles.inputCopy}>{code}</p>
+                                    <img className={styles.button} onClick={() => { copyText() }} src={copy} alt="copy link" />
+                                </div>
 
-                    </Modal>
-                </div>
-                <div className={`${styles.roomSettings} ${isSettings ? styles.hide : ""}`}>
-                    <ul>
-                        <li>
-                            <input className={styles.gap} type="checkbox" name="theater"></input>
-                            <label for="theater">Theater Mode</label>
-                        </li>
-                        <li>
-                            <button onClick={() => changeTheme('light-mode')}>Light Mode</button>
-                        </li>
-                        <li>
-                            <button onClick={() => changeTheme('')}>Dark Mode</button>
-                        </li>
-                    </ul>
-                </div>
-            </header>
-            <div className={styles.body}>
-                <div className={styles.bodyLeft}>
-                    <div className={styles.container}>
-                        <div id='parentPlayer'  className={styles.video}>
-                            <YoutubeReact  url={url}/>
+                            </Modal>
                         </div>
-                        <form onSubmit={handleUrl} className={styles.search}>
-                            <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
-                            <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
-                        </form>
+                        <div className={`${styles.roomSettings} ${isSettings ? styles.hide : ""}`}>
+                            <ul>
+                                <li>
+                                    <input className={styles.gap} type="checkbox" name="theater"></input>
+                                    <label for="theater">Theater Mode</label>
+                                </li>
+                                <li>
+                                    <button onClick={() => changeTheme('light-mode')}>Light Mode</button>
+                                </li>
+                                <li>
+                                    <button onClick={() => changeTheme('')}>Dark Mode</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </header>
+                    <div className={styles.body}>
+                        <div className={styles.bodyLeft}>
+                            <div className={styles.container}>
+                                <div id='parentPlayer' className={styles.video}>
+                                    <YoutubeReact url={url} />
+                                </div>
+                                <form onSubmit={handleUrl} className={styles.search}>
+                                    <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
+                                    <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
+                                </form>
+                            </div>
+                            <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} />
+                        </div>
+                        <div className={styles.bodyRight}>
+                            <ChatClient />
+                        </div>
                     </div>
-                    <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users}/>
-                </div>
-                <div className={styles.bodyRight}>
-                    <ChatClient />
-                </div>
-            </div>
-        </div >
-    )} </>
-        
+                </div >
+            )} </>
+
     );
 }
 
