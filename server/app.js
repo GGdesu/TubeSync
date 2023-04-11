@@ -137,7 +137,7 @@ roomNSP.on("connection", (socket) => {
   });
 
 
-  socket.on("joinRoom", (data, callback) => {
+  socket.on("joinRoom", async (data, callback) => {
 
     const room = roomNSP.adapter.rooms.get(data.roomID)
     if (!room) {
@@ -145,6 +145,16 @@ roomNSP.on("connection", (socket) => {
       callback({
         allow: false,
         message: "Sala não encontrada!"
+      })
+
+      return
+    }
+
+    const nameExist = await checkIfNameExist(data.roomID, data.username)
+    if (!nameExist) {
+      callback({
+        allow: false,
+        message: "Nome já existe na sala!"
       })
 
       return
@@ -200,8 +210,7 @@ roomNSP.on("connection", (socket) => {
       socket.to(roomID).emit("userLeaveMsg", `usuário ${socket.data.username} saiu da sala`)
       socket.leave(roomID)
       deleteRoom(roomID, roomNSP)
-      
-
+      updateAdmin(roomID)
       updateUsersRoom(roomID, roomNSP)
     } catch (error) {
       console.log("erro ao sair da sala -- ", error)
@@ -242,6 +251,7 @@ roomNSP.on("connection", (socket) => {
         //console.log("room size before: ", roomNSP.adapter.rooms.get(room).size)
         //console.log("room: " + room)
         setTimeout(() => {
+          updateAdmin(room)
           deleteRoom(room, roomNSP)
           updateUsersRoom(room, roomNSP)
         }, 500);
@@ -272,6 +282,8 @@ roomNSP.on("connection", (socket) => {
 
   })
 
+
+  //utils
   const deleteRoom = (roomID, roomNSP) => {
     const serverRooms = roomNSP.adapter.rooms
 
@@ -280,6 +292,36 @@ roomNSP.on("connection", (socket) => {
       delete rooms[roomID]
     }
 
+  }
+
+  //criar função pra checar se o nome do user já existe
+
+  const updateAdmin = async (roomID) => {
+    try {
+      if (socket.data.admin === true && typeof roomNSP.adapter.rooms.get(roomID) !== 'undefined') {
+        const sockets = await roomNSP.in(roomID).fetchSockets()
+
+        const randomSocket = sockets[Math.floor(Math.random() * sockets.length)]
+        console.log("Novo Admin! ", randomSocket.data.username)
+        randomSocket.data.admin = true
+
+      }
+
+    } catch (error) {
+      console.log("não foi possivel Escolher o novo admin ", error)
+    }
+
+  }
+
+  const checkIfNameExist = async (roomID, username) => {
+    const users = await getUsers(roomID)
+
+    if (users.some(user => user.username.toLowerCase() === username.toLowerCase())) {
+      console.log("Já existe alguem com esse nome na sala. ")
+      return false
+    }
+
+    return true
   }
 
   const updateUsersRoom = async (roomID, roomNSP) => {
@@ -295,7 +337,6 @@ roomNSP.on("connection", (socket) => {
     sockets.forEach((socket) => {
       let user = { username: socket.data.username, admin: socket.data.admin }
       users.push(user)
-      //console.log("user: " + user.username)
     })
 
     return users
