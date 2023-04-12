@@ -2,6 +2,22 @@ import express from "express"
 import { createServer } from "http"
 import { Server, Socket } from "socket.io"
 import { generateId } from "./utils/Util.js"
+//import { createRoom } from "./socketHandle/RoomHandler.js"
+import {
+  createRoom,
+  joinRoom,
+  changeUrl,
+  checkIfBelong,
+  disconnect,
+  disconnecting,
+  firstTimeGetUrl,
+  leaveRoom,
+  message,
+  playPauseSync,
+  seekSync,
+  updateUsers,
+  userJoined
+} from "./socketHandler/SocketHandler.js"
 
 const PORT = process.env.PORT || 4001
 import router from "./routes/index.js"
@@ -26,12 +42,11 @@ roomNSP.on("connection", (socket) => {
 
   console.log(`client ${socket.id} connected`)
 
-  //console.log(roomNSP.sockets.s)
 
   //Listeners para a sincronizacao do player
 
   //criar a função de trocar assim que entrar na sala
-  socket.on("firstTimeGetUrl", (url, callback) => {
+  /*socket.on("firstTimeGetUrl", (url, callback) => {
     //console.log(`id da sala em first time get url ${socket.data.room} do socket ${socket.id} com nome ${socket.data.username}`)
     try {
       const roomURL = rooms[socket.data.room].url
@@ -100,11 +115,11 @@ roomNSP.on("connection", (socket) => {
   socket.on("seekSync", (data) => {
     console.log("seekSync data: ", data)
     socket.to(socket.data.room).emit("responseSeekSync", data)
-  });
+  });*/
   //----------------------------------------------
 
   //listeners para a criacao das salas
-  socket.on("createRoom", (username, callback) => {
+  /*socket.on("createRoom", (username, callback) => {
     try {
       let ID = generateId()
       while (roomNSP.adapter.rooms.has(ID)) {
@@ -134,10 +149,22 @@ roomNSP.on("connection", (socket) => {
       console.log("não foi possivel criar a sala, error: ", error)
     }
 
-  });
+  });*/
+  firstTimeGetUrl(socket, rooms)
+  changeUrl(socket, roomNSP, rooms)
+  playPauseSync(socket)
+  seekSync(socket)
+  createRoom(socket, roomNSP, rooms)
+  joinRoom(socket, roomNSP)
+  checkIfBelong(socket)
+  leaveRoom(socket, roomNSP, rooms)
+  userJoined(socket, roomNSP)
+  updateUsers(socket, roomNSP)
+  message(socket, roomNSP)
+  disconnecting(socket, roomNSP, rooms)
+  disconnect(socket)
 
-
-  socket.on("joinRoom", async (data, callback) => {
+  /*socket.on("joinRoom", async (data, callback) => {
 
     const room = roomNSP.adapter.rooms.get(data.roomID)
     if (!room) {
@@ -182,9 +209,9 @@ roomNSP.on("connection", (socket) => {
       allow: true,
       message: "OK"
     })
-  });
+  });*/
 
-  socket.on("checkIfBelong", callback => {
+  /*socket.on("checkIfBelong", callback => {
     try {
       if (typeof socket.data.room === 'undefined') {
 
@@ -202,9 +229,9 @@ roomNSP.on("connection", (socket) => {
     } catch (error) {
       console.log("erro ao checar usuario: ", error)
     }
-  })
+  })*/
 
-  socket.on("leaveRoom", () => {
+  /*socket.on("leaveRoom", () => {
     try {
       let roomID = socket.data.room
       socket.to(roomID).emit("userLeaveMsg", `usuário ${socket.data.username} saiu da sala`)
@@ -216,11 +243,11 @@ roomNSP.on("connection", (socket) => {
       console.log("erro ao sair da sala -- ", error)
     }
 
-  })
+  })*/
 
   //quando o usuario entrar na sala, sera notificado a todos atraves de uma msg
   //todos tambem receberao uma atualizacao dos usuarios na sala
-  socket.on("userJoined", () => {
+  /*socket.on("userJoined", () => {
     socket.to(socket.data.room).emit("userJoinedMsg", `usuário ${socket.data.username} entrou na sala`)
     updateUsersRoom(socket.data.room, roomNSP)
 
@@ -239,9 +266,9 @@ roomNSP.on("connection", (socket) => {
 
     }
 
-  })
+  })*/
 
-  socket.on("disconnecting", (reason) => {
+  /*socket.on("disconnecting", (reason) => {
     let socketRooms = socket.rooms
     console.log("disconnecting")
     socketRooms.forEach(room => {
@@ -264,13 +291,13 @@ roomNSP.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     console.log(`server: ${socket.id} disconnected \n${reason}`)
-  })
+  })*/
   //----------------------------------------------------------------
 
   //listener para o chat de mensagens
   console.log(`client ${socket.id} connected to chat`)
 
-  socket.on("message", data => {
+  /*socket.on("message", data => {
 
     roomNSP.in(socket.data.room).emit('responseMessage', {
       text: data,
@@ -280,11 +307,11 @@ roomNSP.on("connection", (socket) => {
     }
     )
 
-  })
+  })*/
 
 
   //utils
-  const deleteRoom = (roomID, roomNSP) => {
+  /*const deleteRoom = (roomID, roomNSP) => {
     const serverRooms = roomNSP.adapter.rooms
 
     if (typeof serverRooms.get(roomID) === "undefined") {
@@ -293,8 +320,6 @@ roomNSP.on("connection", (socket) => {
     }
 
   }
-
-  //criar função pra checar se o nome do user já existe
 
   const updateAdmin = async (roomID) => {
     try {
@@ -340,7 +365,7 @@ roomNSP.on("connection", (socket) => {
     })
 
     return users
-  }
+  }*/
 })
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
