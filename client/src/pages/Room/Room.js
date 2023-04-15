@@ -11,6 +11,7 @@ import ChatClient from '../../components/Chat';
 import RoomInfo from '../../components/RoomInfo';
 import { SocketContext } from '../../context/Socket';
 import Modal from '../../components/Modal';
+import { toast } from 'react-hot-toast';
 
 
 function Room() {
@@ -40,7 +41,8 @@ function Room() {
         let newURL = ytUrlHandler(inputYtUrl)
         console.log("novo url ", newURL)
         if (newURL === "") {
-            alert("Invalid Link!")
+            toast.error("invalid link!")
+
         } else if (newURL === url) {
             console.log("Esse video já está carregado")
         } else {
@@ -74,11 +76,9 @@ function Room() {
     }
 
     const firstTimeRender = async () => {
-
         let res = await socket.emitWithAck("checkIfBelong")
 
-
-        console.log(res.msg)
+        console.log("first render msg", res.msg)
         if (res.allow) {
             //pede para o servidor notificar aos outros usuários que ele entrou na sala 
             //e pede para enviar uma lista atualizada dos usuários na sala
@@ -109,6 +109,17 @@ function Room() {
         navigator.clipboard.writeText(roomCode);
     }
 
+    const updateUsersRoom = (users) => {
+        setUsers(users)
+        console.log("update: ", users)
+    }
+
+    const updateUrl = (url) => {
+
+        console.log("chegou o link ", url)
+        setUrl(url)
+    }
+
     //irá rodar apenas no primeiro render e requisitará algumas informaçoes do servidor
     useEffect(() => {
         //user vai emitir para avisar que entrou e atualizar os membros da sala
@@ -120,37 +131,35 @@ function Room() {
 
     //irá rodar sempre que a variavel socket sofrer alguma alteração
     useEffect(() => {
-        if (socket) {
-            socket.on('updateUrl', url => {
 
-                console.log("chegou o link ", url)
-                setUrl(url)
-            })
+        socket.on('updateUrl', updateUrl)
 
-            //usar isso aqui pra monitorar se o usuário se conectará após recarregar a pagina room
-            socket.on("connect", () => {
-                console.log(`socket ${socket.id} se conectou apartir da sala room, logo ele deve ser redirecionado para home`)
-                //criar um roast message ao inves de um alert
-                //alert(`socket id: ${socket.id} --- Usuário Não autorizado! clique "OK" para ser redirecionado para a HOMEPAGE`)
-                setAllowRender(false)
-                //logica para fazer ele ir para a pagina home
-            })
+        //usar isso aqui pra monitorar se o usuário se conectará após recarregar a pagina room
+        socket.on("connect", () => {
+            console.log(`socket ${socket.id} se conectou apartir da sala room, logo ele deve ser redirecionado para home`)
+            //criar um roast message ao inves de um alert
+            //alert(`socket id: ${socket.id} --- Usuário Não autorizado! clique "OK" para ser redirecionado para a HOMEPAGE`)
+            setAllowRender(false)
+            //logica para fazer ele ir para a pagina home
+        })
 
 
-            /*socket.on("userLeaveMsg", (msg) => {
-                console.log(msg)
-            })
+        /*socket.on("userLeaveMsg", (msg) => {
+            console.log(msg)
+        })
 
-            socket.on("UserJoinMsg", msg => {
-                console.log(msg)
-            })*/
+        socket.on("UserJoinMsg", msg => {
+            console.log(msg)
+        })*/
 
-            socket.on("updateUsersRoom", (users) => {
-                setUsers(users)
-                console.log("update: ", users)
-            })
+        socket.on("updateUsersRoom", updateUsersRoom)
 
+        return () => {
+            socket.off("updateUsersRoom", updateUsersRoom)
+            //socket.off('updateUrl', updateUrl)
         }
+
+
     }, [socket])
 
     return (

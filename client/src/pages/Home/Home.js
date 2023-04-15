@@ -16,6 +16,10 @@ import { SocketContext } from '../../context/Socket';
 import ModalCriarSala from '../../components/ModalCriarSala';
 import ModalEntrarSala from '../../components/ModalEntrarSala';
 
+
+
+
+
 function Home() {
   const [showCriar, setShowCriar] = useState(false)
   const [showEntrar, setShowEntrar] = useState(false)

@@ -4,6 +4,8 @@ import formStyles from '../pages/Home/Home.module.css'
 import { SocketContext } from '../context/Socket';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { toast } from 'react-hot-toast';
+
 
 export default function ModalEntrarSala({id, isShow, setShow}){
   const [username, setUsername] = useState('');
@@ -60,7 +62,8 @@ export default function ModalEntrarSala({id, isShow, setShow}){
         state: {code: code}
       })
     } else if (response) {
-      alert(response.message)
+      toast.error(response.message)
+      //alert(response.message)
     }
   }
 

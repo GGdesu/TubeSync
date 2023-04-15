@@ -19,6 +19,7 @@ import {
   userJoined
 } from "./socketHandler/SocketHandler.js"
 
+
 const PORT = process.env.PORT || 4001
 import router from "./routes/index.js"
 
@@ -163,7 +164,7 @@ roomNSP.on("connection", (socket) => {
   message(socket, roomNSP)
   disconnecting(socket, roomNSP, rooms)
   disconnect(socket)
-
+  
   /*socket.on("joinRoom", async (data, callback) => {
 
     const room = roomNSP.adapter.rooms.get(data.roomID)

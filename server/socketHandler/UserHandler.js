@@ -2,7 +2,7 @@ import { updateUsersRoom } from "./SocketUtil.js"
 
 const checkIfBelong = (socket) => {
 
-    socket.on("checkIfBelong", callback => {
+    socket.on("checkIfBelong", (callback) => {
         try {
             if (typeof socket.data.room === 'undefined') {
 
