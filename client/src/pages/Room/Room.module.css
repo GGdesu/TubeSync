@@ -60,6 +60,12 @@ h1 {
     overflow: hidden;
 }
 
+.roomSettings ul {
+    display: flex;
+    flex-direction: row;
+}
+
+
 .roomSettings li {
     margin: 1rem;
 }

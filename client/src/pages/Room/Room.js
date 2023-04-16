@@ -11,6 +11,11 @@ import ChatClient from '../../components/Chat';
 import RoomInfo from '../../components/RoomInfo';
 import { SocketContext } from '../../context/Socket';
 import Modal from '../../components/Modal';
+import blue from '../../assets/blue-theme.png'
+import original from '../../assets/original-theme.png'
+import red from '../../assets/red-theme.png'
+import green from '../../assets/green-theme.png'
+import yellow from '../../assets/yellow-theme.png'
 
 
 function Room() {
@@ -192,10 +197,19 @@ function Room() {
                             <label for="theater">Theater Mode</label>
                         </li> */}
                         <li>
-                            <button onClick={() => changeTheme('light-mode')}>Light Mode</button>
+                            <button onClick={() => changeTheme('light-mode')}><img src={blue}/></button>
                         </li>
                         <li>
-                            <button onClick={() => changeTheme('')}>Dark Mode</button>
+                            <button onClick={() => changeTheme('')}><img src={original}/></button>
+                        </li>
+                        <li>
+                            <button onClick={() => changeTheme('red-mode')}><img src={red}/></button>
+                        </li>
+                        <li>
+                            <button onClick={() => changeTheme('green-mode')}><img src={green}/></button>
+                        </li>
+                        <li>
+                            <button onClick={() => changeTheme('yellow-mode')}><img src={yellow}/></button>
                         </li>
                     </ul>
                 </div>

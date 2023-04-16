@@ -26,8 +26,14 @@ export default function ModalEntrarSala({id, isShow, setShow}){
   }
 
   const validationSchema = yup.object().shape({
-    username: yup.string().required('Campo obrigatório'),
-    code: yup.string().required('Campo obrigatório'),
+    username: yup.string()
+    .required('Campo obrigatório')
+    .min(2, 'O nome de usuário deve ter pelo menos 2 caracteres.')
+    .max(10, 'O nome de usuário não pode ter mais de 10 caracteres.'),
+    code: yup.string()
+    .required('Campo obrigatório')
+    .min(8, 'Formato inválido, o código deve ter 8 caracteres.')
+    .max(8, 'Formato inválido, o código deve ter 8 caracteres.'),
   });
 
   const isAllowed = async (socket) => {
