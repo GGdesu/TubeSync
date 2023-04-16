@@ -8,7 +8,10 @@ import * as yup from 'yup';
 export default function ModalCriarSala({ id, isShow, setShow}) {
     
     const validation = yup.object().shape({
-        username: yup.string().required('Campo obrigatório.'),
+        username: yup.string()
+            .required('Campo obrigatório.')
+            .min(2, 'O nome de usuário deve ter pelo menos 2 caracteres.')
+            .max(10, 'O nome de usuário não pode ter mais de 10 caracteres.')
     })
     
     const [username, setUsername] = useState('')
@@ -22,7 +25,7 @@ export default function ModalCriarSala({ id, isShow, setShow}) {
     const socket = useContext(SocketContext)
 
     const onChangeUsername = (e) => {
-        setUsername(e.target.value)
+        setUsername(e.target.value.replace(/[\W_]+/g, ''));
         setError(null)
     }
 
@@ -53,7 +56,7 @@ export default function ModalCriarSala({ id, isShow, setShow}) {
                     <button onClick={setShow} className={styles.close}>X</button>
                     <form className={formStyles.formModal} onSubmit={criarSala}>
                         <h2 className={formStyles.titulo}>Criar Sala</h2>
-                        <input onChange={onChangeUsername} id="nome" placeholder='Seu nome' className={formStyles.input}></input>
+                        <input onChange={onChangeUsername} id="nome" placeholder='Seu nome' autocomplete="off" className={formStyles.input}></input>
                         {error && <span className={formStyles.error}>{error}</span>}
                         <button type='submit' className={formStyles.btn}>Criar</button>
                     </form>

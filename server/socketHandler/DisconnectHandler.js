@@ -12,6 +12,7 @@ const disconnecting = (socket, roomNSP, rooms) => {
                 //console.log("room size before: ", roomNSP.adapter.rooms.get(room).size)
                 //console.log("room: " + room)
                 setTimeout(() => {
+                    socket.to(socket.data.room).emit("userLeaveMsg", socket.data.username)
                     updateAdmin(room, socket, roomNSP)
                     deleteRoom(room, roomNSP, rooms)
                     updateUsersRoom(room, roomNSP)

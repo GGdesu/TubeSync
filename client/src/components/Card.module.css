@@ -1,6 +1,6 @@
 .card{
     border-radius: 10px;
-    border: 1.5px solid var(--rosaChoque);
+    border: 1.5px solid var(--membro);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -13,17 +13,18 @@
     justify-content: center;
 }
 .userNome{
+    word-wrap: break-word;
     overflow-y: hidden;
     text-align: center;
     border-radius: 0 0 10px 10px;
     width: 100px;
     height: 20px;
-    background-color: var(--rosaChoque);
+    background-color: var(--membro);
 }
 
 .cardAdmin{
     border-radius: 10px;
-    border: 1.5px solid var(--dourado);
+    border: 1.5px solid var(--admin);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,5 +36,5 @@
     border-radius: 0 0 10px 10px;
     width: 100px;
     height: 20px;
-    background-color: var(--dourado);
+    background-color: var(--admin);
 }

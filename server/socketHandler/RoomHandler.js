@@ -110,7 +110,7 @@ const leaveRoom = (socket, roomNSP, rooms) => {
   socket.on("leaveRoom", () => {
     try {
       let roomID = socket.data.room
-      socket.to(roomID).emit("userLeaveMsg", `usuário ${socket.data.username} saiu da sala`)
+      socket.to(socket.data.room).emit("userLeaveMsg", socket.data.username)
       socket.leave(roomID)
       deleteRoom(roomID, roomNSP, rooms)
       updateAdmin(roomID, socket, roomNSP)

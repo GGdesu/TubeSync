@@ -47,11 +47,29 @@ function ChatClient() {
         bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
 
-    const userMsg = (msg) => {
-        toast(msg, {
+    const userLeaveMsg = (name) => {
+
+        const notification = { type: 'notification', text: `${name} saiu da sala` };
+        setMessageList((current) => [...current, notification])
+        console.log("CHAT: ", name + " saiu da sala")
+        toast(notification.text, {
             icon: 'ℹ',
         })
-        console.log("CHAT: ", msg)
+    }
+
+    const userJoinMsg = (name) => {
+
+        const notification = { type: 'notification', text: `${name} entrou na sala` };
+        setMessageList((current) => [...current, notification])
+        console.log("CHAT: ", name + " entrou na sala")
+        toast(notification.text, {
+            icon: 'ℹ',
+        })
+    }
+
+    const responseMessage = (data) =>{
+        setMessageList((current) => [...current, data])
+
     }
 
     useEffect(() => {
@@ -60,25 +78,22 @@ function ChatClient() {
 
     useEffect(() => {
 
-        socket.on('responseMessage', data => {
-            setMessageList((current) => [...current, data])
-        })
+        socket.on('responseMessage', responseMessage)
 
-        socket.on('userLeaveMsg', userMsg)
+        socket.on('userLeaveMsg', userLeaveMsg)
 
-        socket.on('userJoinedMsg', userMsg)
-        //Parece que o socket entra aqui duas vezes pois o socket é sofre alguma modificação que faz ele entrar aqui talvez
+        socket.on('userJoinMsg', userJoinMsg)
 
         //libera os listeners para que não aconteça de ser acionado mais de uma vez, informaçao duplicada
         return () => {
-            socket.off('responseMessage')
-            socket.off('userJoinedMsg', userMsg)
-            socket.off('userLeaveMsg', userMsg)
+            socket.off('responseMessage', responseMessage)
+            socket.off('userJoinMsg', userJoinMsg)
+            socket.off('userLeaveMsg', userLeaveMsg)
         }
     }, [socket]);
 
     return (
-        <div className={styles.chat}>
+        <div id="chat" className={styles.chat}>
             <div className={styles.chatHeader} onClick={handleToggle}>
                 <h3>Chat</h3>
                 <img src={menos} alt="close" />
@@ -86,11 +101,22 @@ function ChatClient() {
             <div className={`${styles.chatBody} ${isActive ? styles.hide : ""}`}>
                 {
                     messageList.map((message, index) => (
-                        <div className={`${styles["messageContainer"]} ${message.id === socket.id && styles["myMessage"]}`} key={index}>
-                            <div className={styles.messageAuthor}><strong>{message.username}</strong></div>
-                            <div>{message.text}</div>
-                            <div className={styles.messageTimestamp}>{message.timestamp}</div>
-                        </div>
+                        <>{
+                            message.type === 'notification' && (
+                                <div className={styles.notification}>{message.text}</div>
+                            )}
+
+                            {
+                                message.type === 'message' && (
+                                    <div className={`${styles["messageContainer"]} ${message.id === socket.id && styles["myMessage"]}`} key={index}>
+                                        <div>
+                                            <div className={styles.messageAuthor}><strong>{message.id === socket.id ? 'Você' : message.username}</strong></div>
+                                            <div>{message.text}</div>
+                                            <div className={styles.messageTimestamp}>{message.timestamp}</div>
+                                        </div>
+                                    </div>
+                                )}
+                        </>
                     ))
                 }
                 <div ref={bottomRef} />

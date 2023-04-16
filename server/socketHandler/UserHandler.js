@@ -69,7 +69,7 @@ const kickUser = (socket, roomNSP, rooms) => {
 const userJoined = (socket, roomNSP) => {
 
     socket.on("userJoined", () => {
-        socket.to(socket.data.room).emit("userJoinedMsg", `usuário ${socket.data.username} entrou na sala`)
+        socket.to(socket.data.room).emit("userJoinMsg", socket.data.username)
 
         updateUsersRoom(socket.data.room, roomNSP)
 
