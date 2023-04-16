@@ -1,16 +1,10 @@
 
-
-function makeID(length) {
-    var result = "";
-    var characters = "0123456789";
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
+  const generateId = (length) => {
+    let id = (Math.random() * Date.now()).toString(32).replace(".", "")
+    return id.slice(0,length)
+}
 
 
   export {
-    makeID
+    generateId
   }

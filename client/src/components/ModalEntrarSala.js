@@ -4,17 +4,20 @@ import formStyles from '../pages/Home/Home.module.css'
 import { SocketContext } from '../context/Socket';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { toast } from 'react-hot-toast';
 
-export default function ModalEntrarSala({id, isShow, setShow}){
+
+export default function ModalEntrarSala({ id, isShow, setShow }) {
   const [username, setUsername] = useState('');
   const [code, setCode] = useState('');
-  const [errors, setErrors] = useState({username: '', code: ''});
+  const [pin, setPin] = useState()
+  const [errors, setErrors] = useState({ username: '', code: '' });
 
   const socket = useContext(SocketContext);
   const navigate = useNavigate();
 
   const handleOutsideClick = (e) => {
-    if(e.target.id === id) setShow()
+    if (e.target.id === id) setShow()
   }
 
   const onChangeUsername = (e) => {
@@ -23,6 +26,10 @@ export default function ModalEntrarSala({id, isShow, setShow}){
 
   const onChangeCode = (e) => {
     setCode(e.target.value)
+  }
+
+  const onChangePin = (e) => {
+    setPin(e.target.value)
   }
 
   const validationSchema = yup.object().shape({
@@ -39,7 +46,7 @@ export default function ModalEntrarSala({id, isShow, setShow}){
   const isAllowed = async (socket) => {
     const validationErrors = {};
     try {
-      await validationSchema.validate({username, code}, {abortEarly: false});
+      await validationSchema.validate({ username, code }, { abortEarly: false });
     } catch (err) {
       err.inner.forEach((e) => {
         validationErrors[e.path] = e.message;
@@ -50,26 +57,30 @@ export default function ModalEntrarSala({id, isShow, setShow}){
 
     const emitResponse = await socket.emitWithAck('joinRoom', {
       roomID: code,
-      username,
-    });
+      username: username,
+      pin: pin
+    })
 
-    return emitResponse;
+    return emitResponse
   }
 
   const entrarSala = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const response = await isAllowed(socket);
-    if (response && response.allow) {
-      navigate('/Room', {
-        state: {code: code}
+    let response = await isAllowed(socket)
+    console.log("allow? ", response.allow)
+    const user = {username: response.username, admin: false}
+    if (response.allow) {
+      navigate('/room', {
+        state: { code: code, pin: pin, user : user }
       })
     } else if (response) {
-      alert(response.message)
+      toast.error(response.message)
+      //alert(response.message)
     }
   }
 
-  return(
+  return (
     isShow && (
       <div id={id} onClick={handleOutsideClick} className={`${styles.overlay} ${styles.fadeIn}`}>
         <div className={styles.conteudo}>
@@ -94,6 +105,12 @@ export default function ModalEntrarSala({id, isShow, setShow}){
             {errors.code && (
               <span className={formStyles.error}>{errors.code}</span>
             )}
+            <input
+              onChange={onChangePin}
+              placeholder='Pin da sala'
+              className={formStyles.input}
+              value={pin}
+            />
             <button type='submit' className={formStyles.btn}>Entrar</button>
           </form>
         </div>

@@ -35,10 +35,13 @@ export default function ModalCriarSala({ id, isShow, setShow}) {
             await validation.validate({ username })
             let response = await socket.emitWithAck("createRoom", username)
             const code = response.roomID
+            const pin = response.pin
+            const user = {username: username, admin : true}
             console.log("codigo da sala: ", code)
+            console.log("pin da sala: ", pin)
             if (response.allow) {
                 navigate('/Room', {
-                    state: {code : code}
+                    state: {code : code, pin : pin, user : user}
                 })
             }
         } catch (err) {
