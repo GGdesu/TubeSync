@@ -1,4 +1,5 @@
 import { generateId } from "../utils/Util.js"
+import { createRoomPin, getRoomPin } from "../utils/roomsUtil.js";
 import { checkIfNameExist, deleteRoom, updateAdmin, updateUsersRoom } from "./SocketUtil.js";
 
 
@@ -6,10 +7,16 @@ const createRoom = (socket, roomNSP, rooms) => {
 
   socket.on("createRoom", (username, callback) => {
     try {
-      let ID = generateId()
+      let ID = generateId(8)
       while (roomNSP.adapter.rooms.has(ID)) {
-        ID = generateId()
+        ID = generateId(8)
       }
+
+      if (!rooms[ID]) {
+        rooms[ID] = {}
+      }
+
+      const roomPin = createRoomPin(rooms, ID)
       //alguns atributos para o usuario
       socket.data.username = username
       socket.data.admin = true
@@ -18,15 +25,14 @@ const createRoom = (socket, roomNSP, rooms) => {
 
       socket.join(ID)
 
-      if (!rooms[ID]) {
-        rooms[ID] = {}
-      }
+      
       //um atributo da sala para guardar o atual url
       rooms[ID].url = ""
       callback({
         allow: true,
         username: username,
-        roomID: ID
+        roomID: ID,
+        pin: roomPin
       })
       console.log(`room ${ID} was created`)
 
@@ -37,7 +43,7 @@ const createRoom = (socket, roomNSP, rooms) => {
   });
 }
 
-const joinRoom = (socket, roomNSP) => {
+const joinRoom = (socket, roomNSP, rooms) => {
 
   socket.on("joinRoom", async (data, callback) => {
 
@@ -57,6 +63,17 @@ const joinRoom = (socket, roomNSP) => {
       callback({
         allow: false,
         message: "Nome já existe na sala!"
+      })
+
+      return
+    }
+
+    const roomPin = getRoomPin(rooms, data.roomID)
+    if(data.pin !== roomPin){
+      console.log("Pin incorreto")
+      callback({
+        allow: false,
+        message: "Pin incorreto"
       })
 
       return
@@ -82,6 +99,7 @@ const joinRoom = (socket, roomNSP) => {
 
     callback({
       allow: true,
+      username: socket.data.username,
       message: "OK"
     })
   })

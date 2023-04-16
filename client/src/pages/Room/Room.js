@@ -18,11 +18,15 @@ function Room() {
     const [isInfo, setInfo] = useState("false")
     const [isSettings, setSettings] = useState("false")
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isUsersListOpen, setIsUsersListOpen] = useState(false)
+
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
     const [users, setUsers] = useState()
+    const [currentUser, setCurrentUser] = useState()
     const [allowRender, setAllowRender] = useState(true)
     const [code, setCode] = useState()
+    const [pin, setPin] = useState()
 
     const location = useLocation()
     const navigate = useNavigate()
@@ -75,13 +79,17 @@ function Room() {
         socket.emit("leaveRoom")
     }
 
+
+
     const firstTimeRender = async () => {
         let res = await socket.emitWithAck("checkIfBelong")
+        console.log(`Usuario ${res.username} é admin? ${res.admin}`)
+
+        setCurrentUser({ username: res.username, admin: res.admin })
 
         console.log("first render msg", res.msg)
         if (res.allow) {
-            //pede para o servidor notificar aos outros usuários que ele entrou na sala 
-            //e pede para enviar uma lista atualizada dos usuários na sala
+
             socket.emit("userJoined")
             //pede para o servidor mandar caso tenha um link de video atualizado
             socket.emit("firstTimeGetUrl", url, (response) => {
@@ -89,13 +97,19 @@ function Room() {
                 if (response.hasChange) {
                     setUrl(response.url)
                 }
-                console.log(res.allow)
-                //adiciona o codigo da sala na variavel code
+
+
                 setCode(location.state.code ?? "none")
-                //coloca a resposta que vai decider se vai poder renderizar a sala ou não
-                setAllowRender(res.allow)
-                return res.allow
+                setPin(location.state.pin ?? "none")
+                //setCurrentUser(location.state.user ?? "none")
+
             })
+            //adiciona o codigo da sala na variavel code
+            //coloca a resposta que vai decider se vai poder renderizar a sala ou não
+            setAllowRender(res.allow)
+
+            return res.allow
+
         } else {
             console.log(res.allow)
             setAllowRender(res.allow)
@@ -104,14 +118,21 @@ function Room() {
 
     }
 
-    function copyText() {
-        var roomCode = code
+    function copyRoomCode() {
+        let roomCode = code
         navigator.clipboard.writeText(roomCode);
+    }
+
+    function copyRoomPin() {
+        let roomPin = pin
+        navigator.clipboard.writeText(roomPin);
     }
 
     const updateUsersRoom = (users) => {
         setUsers(users)
+
         console.log("update: ", users)
+
     }
 
     const updateUrl = (url) => {
@@ -120,43 +141,73 @@ function Room() {
         setUrl(url)
     }
 
+    const UpdateCurrentUser = () => {
+        if (currentUser?.username) {
+
+            for (const user of users) {
+                if (user.username === currentUser.username && user.admin !== currentUser.admin) {
+                    console.log(`current user ${currentUser.username} vai ser alterado`)
+                    setCurrentUser(user)
+                }
+            }
+        }
+    }
+
+    const updatePin = (newPin) => {
+        console.log("novo pin recebido", newPin)
+        setPin(newPin)
+    }
+
+    const forceLeave = (msg) => {
+        toast.error(msg)
+        console.log(msg)
+        navigate("/")
+        //setAllowRender(false)
+    }
+
+    //const changeState = ()
+
     //irá rodar apenas no primeiro render e requisitará algumas informaçoes do servidor
     useEffect(() => {
         //user vai emitir para avisar que entrou e atualizar os membros da sala
         firstTimeRender()
 
+
+
     }, [])
 
+    useEffect(() => {
+        UpdateCurrentUser()
 
+
+    }, [users])
 
     //irá rodar sempre que a variavel socket sofrer alguma alteração
     useEffect(() => {
 
         socket.on('updateUrl', updateUrl)
 
+        socket.on('updatePin', updatePin)
+
+        socket.on('forceLeave', forceLeave)
+
         //usar isso aqui pra monitorar se o usuário se conectará após recarregar a pagina room
         socket.on("connect", () => {
             console.log(`socket ${socket.id} se conectou apartir da sala room, logo ele deve ser redirecionado para home`)
-            //criar um roast message ao inves de um alert
+
             //alert(`socket id: ${socket.id} --- Usuário Não autorizado! clique "OK" para ser redirecionado para a HOMEPAGE`)
             setAllowRender(false)
-            //logica para fazer ele ir para a pagina home
+
         })
 
-
-        /*socket.on("userLeaveMsg", (msg) => {
-            console.log(msg)
-        })
-
-        socket.on("UserJoinMsg", msg => {
-            console.log(msg)
-        })*/
 
         socket.on("updateUsersRoom", updateUsersRoom)
 
         return () => {
             socket.off("updateUsersRoom", updateUsersRoom)
-            //socket.off('updateUrl', updateUrl)
+            socket.off('updateUrl', updateUrl)
+            socket.off('updatePin', updatePin)
+            socket.off('forceLeave', forceLeave)
         }
 
 
@@ -168,16 +219,29 @@ function Room() {
                 <div className={styles.app}>
                     <header className={styles.header}>
                         <div className={styles.headerLeft}>
-                            <Link onClick={() => leaveRoom()} to="/"><h1>TubeSync</h1> </Link>
+                            <Link onClick={() => leaveRoom()} to="/"> <h1>TubeSync</h1> </Link>
                         </div>
                         <div className={styles.headerRight}>
+                            {currentUser?.admin &&
+                                <button href="#" onClick={() => setIsUsersListOpen(!isUsersListOpen)}><img src={settings} alt="Users List" /></button>
+                            }
                             <button href="#" onClick={() => setSettings(!isSettings)}><img src={settings} alt="settings" /></button>
                             <button href="#" onClick={() => setIsModalOpen(!isModalOpen)}><img src={add} alt="add" /></button>
+                            <Modal id="modalUsersList" isShow={isUsersListOpen} setShow={() => { setIsUsersListOpen(!isUsersListOpen) }}>
+                                {currentUser?.admin && (users?.map((elem) =>
+                                    <li>{elem.username}</li>))
+                                }
+                            </Modal>
                             <Modal id="modal" isShow={isModalOpen} setShow={() => setIsModalOpen(!isModalOpen)}>
-                                <h2 className={styles.label}>Compartilhe o código:</h2>
+                                <h2 className={styles.label}>Código da sala:</h2>
                                 <div className={styles.copytxt}>
                                     <p className={styles.inputCopy}>{code}</p>
-                                    <img className={styles.button} onClick={() => { copyText() }} src={copy} alt="copy link" />
+                                    <img className={styles.button} onClick={() => { copyRoomCode() }} src={copy} alt="copy link" />
+                                </div>
+                                <h2 className={styles.label}>Pin da sala:</h2>
+                                <div className={styles.copytxt}>
+                                    <p className={styles.inputCopy}>{pin}</p>
+                                    <img className={styles.button} onClick={() => { copyRoomPin() }} src={copy} alt="copy link" />
                                 </div>
 
                             </Modal>
@@ -196,7 +260,7 @@ function Room() {
                                 </li>
                             </ul>
                         </div>
-                    </header>
+                    </header >
                     <div className={styles.body}>
                         <div className={styles.bodyLeft}>
                             <div className={styles.container}>
@@ -208,14 +272,15 @@ function Room() {
                                     <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
                                 </form>
                             </div>
-                            <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} />
+                            <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} typeUser={currentUser?.admin} />
                         </div>
                         <div className={styles.bodyRight}>
                             <ChatClient />
                         </div>
                     </div>
                 </div >
-            )} </>
+            )
+        } </>
 
     );
 }

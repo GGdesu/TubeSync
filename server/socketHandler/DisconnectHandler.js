@@ -16,7 +16,7 @@ const disconnecting = (socket, roomNSP, rooms) => {
                     deleteRoom(room, roomNSP, rooms)
                     updateUsersRoom(room, roomNSP)
                 }, 500);
-                //
+             
             }
 
         })

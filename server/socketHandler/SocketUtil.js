@@ -38,10 +38,29 @@ const deleteRoom = (roomID, roomNSP, rooms) => {
     const serverRooms = roomNSP.adapter.rooms
 
     if (typeof serverRooms.get(roomID) === "undefined") {
-        console.log(`A sala sera apagada ${roomID} e o URL de video que ela contem - ${rooms[roomID].url}`)
+        console.log(`A sala sera apagada ${roomID}. O URL de video que ela contem - ${rooms[roomID].url} e o Pin ${rooms[roomID].pin} serão excluidos`)
         delete rooms[roomID]
     }
 
+}
+
+const removeUser = async (roomID, roomNSP, username) => {
+    const sockets = await roomNSP.in(roomID).fetchSockets()
+
+    sockets.forEach((socket) => {
+        if(socket.data.username === username){
+            socket.leave(roomID)
+            erasedSocketInfo(socket)
+            console.log(`user ${username} removido da sala`)
+            socket.emit('forceLeave', 'Voce foi removido da sala')
+            return
+        }
+    })
+}
+
+const erasedSocketInfo = (socket) => {
+    socket.data.username = ""
+    socket.data.room = ""
 }
 
 const getUsers = async (roomID, roomNSP) => {
@@ -60,5 +79,6 @@ export {
     updateAdmin,
     updateUsersRoom,
     deleteRoom,
+    removeUser,
     getUsers
 }

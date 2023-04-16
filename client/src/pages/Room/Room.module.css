@@ -161,7 +161,7 @@ input{
     background-color: var(--infoHeader-bg);
     color: var(--infoHeader-color);
     padding: 10px;
-    width: 150px;
+    width: 200px;
     border-radius: 5px 5px 0 0;
 }
 .infoBody{

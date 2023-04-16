@@ -69,6 +69,7 @@ function ChatClient() {
         socket.on('userJoinedMsg', userMsg)
         //Parece que o socket entra aqui duas vezes pois o socket é sofre alguma modificação que faz ele entrar aqui talvez
 
+        //libera os listeners para que não aconteça de ser acionado mais de uma vez, informaçao duplicada
         return () => {
             socket.off('responseMessage')
             socket.off('userJoinedMsg', userMsg)

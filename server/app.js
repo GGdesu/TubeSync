@@ -16,7 +16,8 @@ import {
   playPauseSync,
   seekSync,
   updateUsers,
-  userJoined
+  userJoined,
+  kickUser
 } from "./socketHandler/SocketHandler.js"
 
 
@@ -156,7 +157,7 @@ roomNSP.on("connection", (socket) => {
   playPauseSync(socket)
   seekSync(socket)
   createRoom(socket, roomNSP, rooms)
-  joinRoom(socket, roomNSP)
+  joinRoom(socket, roomNSP, rooms)
   checkIfBelong(socket)
   leaveRoom(socket, roomNSP, rooms)
   userJoined(socket, roomNSP)
@@ -164,6 +165,7 @@ roomNSP.on("connection", (socket) => {
   message(socket, roomNSP)
   disconnecting(socket, roomNSP, rooms)
   disconnect(socket)
+  kickUser(socket, roomNSP, rooms)
   
   /*socket.on("joinRoom", async (data, callback) => {
 
