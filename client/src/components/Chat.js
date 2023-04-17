@@ -3,6 +3,7 @@ import menos from '../assets/menos.png'
 import pointer from '../assets/pointer.png'
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { SocketContext } from '../context/Socket';
+import { toast } from 'react-hot-toast';
 
 
 function ChatClient({theaterMode}) {
@@ -46,33 +47,48 @@ function ChatClient({theaterMode}) {
         bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
 
+    const userLeaveMsg = (name) => {
+
+        const notification = { type: 'notification', text: `${name} saiu da sala` };
+        setMessageList((current) => [...current, notification])
+        console.log("CHAT: ", name + " saiu da sala")
+        toast(notification.text, {
+            icon: 'ℹ',
+        })
+    }
+
+    const userJoinMsg = (name) => {
+
+        const notification = { type: 'notification', text: `${name} entrou na sala` };
+        setMessageList((current) => [...current, notification])
+        console.log("CHAT: ", name + " entrou na sala")
+        toast(notification.text, {
+            icon: 'ℹ',
+        })
+    }
+
+    const responseMessage = (data) =>{
+        setMessageList((current) => [...current, data])
+
+    }
 
     useEffect(() => {
         autoScroll()
     }, [messageList]);
 
     useEffect(() => {
-        if (socket) {
-            socket.on('responseMessage', data => {
-                setMessageList((current) => [...current, data])
-            })
 
-            socket.on('userLeaveMsg', name => {
-                const notification = { type: 'notification', text: `${name} saiu da sala` };
-                setMessageList((current) => [...current, notification])                
-                console.log("CHAT: ", name + " saiu da sala")
-            })
+        socket.on('responseMessage', responseMessage)
 
-            socket.on('userJoinMsg', name => {
-                const notification = { type: 'notification', text: `${name} entrou na sala` };
-                setMessageList((current) => [...current, notification])
-                console.log("CHAT: ", name + " entrou na sala")
-            })
+        socket.on('userLeaveMsg', userLeaveMsg)
 
-            /*socket.on("updateUsersRoom", data => {
-                console.log("update: ", data)
-            })*/
-            return () => socket.off('responseMessage')
+        socket.on('userJoinMsg', userJoinMsg)
+
+        //libera os listeners para que não aconteça de ser acionado mais de uma vez, informaçao duplicada
+        return () => {
+            socket.off('responseMessage', responseMessage)
+            socket.off('userJoinMsg', userJoinMsg)
+            socket.off('userLeaveMsg', userLeaveMsg)
         }
     }, [socket]);
 
@@ -99,7 +115,7 @@ function ChatClient({theaterMode}) {
                                             <div className={styles.messageTimestamp}>{message.timestamp}</div>
                                         </div>
                                     </div>
-                                    )}
+                                )}
                         </>
                     ))
                 }

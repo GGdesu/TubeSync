@@ -16,6 +16,10 @@ import { SocketContext } from '../../context/Socket';
 import ModalCriarSala from '../../components/ModalCriarSala';
 import ModalEntrarSala from '../../components/ModalEntrarSala';
 
+
+
+
+
 function Home() {
   const [showCriar, setShowCriar] = useState(false)
   const [showEntrar, setShowEntrar] = useState(false)
@@ -30,18 +34,14 @@ function Home() {
   // Cria o socket uma vez quando o componente é montado
   useEffect(() => {
 
-    socket.on('connect', () => {
+    /*socket.on('connect', () => {
       console.log("Client: Connect! " + socket.id)
-      //console.log(newSocket)
-      //teste para ver se a sala funcionava
-      //createRoom(newSocket)
-      //setConnected(true)
-    })
+      
+    })*/
 
 
     socket.on('disconnect', () => {
       console.log("Client: Disconnect! " + socket.id)
-      //setConnected(false)
     })
   }, []);
 

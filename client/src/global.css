@@ -41,8 +41,8 @@ li{
     --chatContainerInput-bg: #202020;
     --chatInput-bg: #fff;
     --message-Container:#E4105D;
-    --rosaChoque: #E4105D;
-    --dourado: #daa520;
+    --membro: #E4105D;
+    --admin: #daa520;
 }
 
 .light-mode:root {
@@ -65,4 +65,78 @@ li{
     --chatBody-bg: #012a4a;
     --chatContainerInput-bg: #012a4a;
     --chatInput-bg: #fff;
+    --membro: #E4105D;
+    --admin: #daa520;
+}
+
+.red-mode:root {
+    --header-bg: #800f2f;
+    --header-color: #fff;
+    --roomSettings-bg: #800f2f;
+    --inviteSettings-bg: #800f2f;
+    --body-bg: #ffccd5;
+    --search-border-bottom-color: #ff8fa3;
+    --searchInput-bg: #ffccd5;
+    --searchInput-color: #000000;
+    --placeholder-color: #000000;
+    --infoHeader-bg: #ff8fa3;
+    --infoHeader-color: #fff;
+    --infoBody-bg: #800f2f;
+    --infoBody-color: #fff;
+    --chatHeader-color: #fff;
+    --chatHeader-bg: #ff8fa3;
+    --chatBody-color: #fff;
+    --chatBody-bg: #800f2f;
+    --chatContainerInput-bg: #800f2f;
+    --chatInput-bg: #fff;
+    --membro: #E4105D;
+    --admin: #daa520;
+}
+
+.green-mode:root {
+    --header-bg: #004b23;
+    --header-color: #fff;
+    --roomSettings-bg: #004b23;
+    --inviteSettings-bg: #004b23;
+    --body-bg: #d9ed92;
+    --search-border-bottom-color: #38b000;
+    --searchInput-bg: #d9ed92;
+    --searchInput-color: #000000;
+    --placeholder-color: #000000;
+    --infoHeader-bg: #38b000;
+    --infoHeader-color: #fff;
+    --infoBody-bg: #004b23;
+    --infoBody-color: #fff;
+    --chatHeader-color: #fff;
+    --chatHeader-bg: #38b000;
+    --chatBody-color: #fff;
+    --chatBody-bg: #004b23;
+    --chatContainerInput-bg: #004b23;
+    --chatInput-bg: #fff;
+    --membro: #E4105D;
+    --admin: #daa520;
+}
+
+.yellow-mode:root {
+    --header-bg: #926c15;
+    --header-color: #fff;
+    --roomSettings-bg: #926c15;
+    --inviteSettings-bg: #926c15;
+    --body-bg: #fff2b2;
+    --search-border-bottom-color: #c9a227;
+    --searchInput-bg: #fff2b2;
+    --searchInput-color: #000000;
+    --placeholder-color: #000000;
+    --infoHeader-bg: #c9a227;
+    --infoHeader-color: #fff;
+    --infoBody-bg: #926c15;
+    --infoBody-color: #fff;
+    --chatHeader-color: #fff;
+    --chatHeader-bg: #c9a227;
+    --chatBody-color: #fff;
+    --chatBody-bg: #926c15;
+    --chatContainerInput-bg: #926c15;
+    --chatInput-bg: #fff;
+    --membro: #E4105D;
+    --admin: #daa520;
 }

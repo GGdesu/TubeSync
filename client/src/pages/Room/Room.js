@@ -1,5 +1,5 @@
 import styles from './Room.module.css'
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import pesquisar from '../../assets/pesquisar.png'
 import settings from '../../assets/settings.png'
@@ -11,6 +11,12 @@ import ChatClient from '../../components/Chat';
 import RoomInfo from '../../components/RoomInfo';
 import { SocketContext } from '../../context/Socket';
 import Modal from '../../components/Modal';
+import { toast } from 'react-hot-toast';
+import blue from '../../assets/blue-theme.png'
+import original from '../../assets/original-theme.png'
+import red from '../../assets/red-theme.png'
+import green from '../../assets/green-theme.png'
+import yellow from '../../assets/yellow-theme.png'
 
 
 function Room() {
@@ -21,74 +27,77 @@ function Room() {
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
     const [users, setUsers] = useState()
+    const [currentUser, setCurrentUser] = useState()
+    const [allowRender, setAllowRender] = useState(true)
+    const [code, setCode] = useState()
+    const [pin, setPin] = useState()
 
     const location = useLocation()
-    //usar para mostrar no botão de codigo da sala
-    const code = location.state.code
+    const navigate = useNavigate()
+
     const socket = useContext(SocketContext)
-    
+
 
     const infoToggle = () => {
         setInfo(!isInfo);
     };
     const ulInfo = () => {
-        if(window.innerWidth < 800){
+        if (window.innerWidth < 800) {
             var chat = document.getElementById("chat")
             var info = document.getElementById("info")
-            
+
             chat.style.display = "flex"
-            info.style.display = "none"   
+            info.style.display = "none"
         }
     };
     const ulChat = () => {
-        if(window.innerWidth < 800){
+        if (window.innerWidth < 800) {
             var chat = document.getElementById("chat")
             var info = document.getElementById("info")
-            
+
             chat.style.display = "none"
             info.style.display = "flex"
-                
+
         }
     };
-    
+
     useEffect(() => {
         function handleResize() {
             var chat = document.getElementById("chat")
             var info = document.getElementById("info")
 
-            if(window.innerWidth > 800){
+            if (window.innerWidth > 800) {
                 chat.style.display = "flex"
                 info.style.display = "flex"
-            }else{
+            } else {
                 chat.style.display = "none"
                 info.style.display = "none"
             }
         }
-        
+
         window.addEventListener('resize', handleResize);
-    
+
         return () => {
-          window.removeEventListener('resize', handleResize);
+            window.removeEventListener('resize', handleResize);
         };
     }, []);
 
     const handleUrl = (e) => {
-        e.preventDefault() 
-        //socket.emit("updateUsers")
-        console.log("entrou no handle url")
+        e.preventDefault()
+
         let newURL = ytUrlHandler(inputYtUrl)
         console.log("novo url ", newURL)
-        if(newURL === ""){
-            alert("Invalid Link!")
-        }else if(newURL === url){
+        if (newURL === "") {
+            toast.error("invalid link!")
+
+        } else if (newURL === url) {
             console.log("Esse video já está carregado")
-        }else{
-            console.log("else")
+        } else {
             setUrl(newURL)
             socket.emit("changeUrl", newURL)
-            
+
         }
-        
+
     }
 
     const onChangeUrl = (e) => {
@@ -97,132 +106,227 @@ function Room() {
     }
 
     const removeAllClasses = (element) => {
-        console.log (element)
+        //console.log(element)
         while (element.classList.length > 0) {
-          element.classList.remove(element.classList.item(0));
+            element.classList.remove(element.classList.item(0));
         }
-      }
+    }
 
     const changeTheme = (themes) => {
-        console.log ('entrou na função')
-       const theme = document.documentElement
-       removeAllClasses(theme)
-       theme.classList.add(themes)
+        console.log('entrou na função')
+        const theme = document.documentElement
+        removeAllClasses(theme)
+        theme.classList.add(themes)
     }
     const leaveRoom = () => {
-        //provavelmente isso vai dar erro, pois os atributos do socket
-        //apenas podem ser usados no servidor
         socket.emit("leaveRoom")
     }
-    function copyText() {
-        var roomCode = code
+
+
+
+    const firstTimeRender = async () => {
+        let res = await socket.emitWithAck("checkIfBelong")
+        console.log(`Usuario ${res.username} é admin? ${res.admin}`)
+
+        setCurrentUser({ username: res.username, admin: res.admin })
+
+        console.log("first render msg", res.msg)
+        if (res.allow) {
+
+            socket.emit("userJoined")
+            //pede para o servidor mandar caso tenha um link de video atualizado
+            socket.emit("firstTimeGetUrl", url, (response) => {
+                console.log("url recebido ", response)
+                if (response.hasChange) {
+                    setUrl(response.url)
+                }
+
+
+                setCode(location.state.code ?? "none")
+                setPin(location.state.pin ?? "none")
+                //setCurrentUser(location.state.user ?? "none")
+
+            })
+            //adiciona o codigo da sala na variavel code
+            //coloca a resposta que vai decider se vai poder renderizar a sala ou não
+            setAllowRender(res.allow)
+
+            return res.allow
+
+        } else {
+            console.log(res.allow)
+            setAllowRender(res.allow)
+            return res.allow
+        }
+
+    }
+
+    function copyRoomCode() {
+        let roomCode = code
         navigator.clipboard.writeText(roomCode);
-      }
+    }
+
+    function copyRoomPin() {
+        let roomPin = pin
+        navigator.clipboard.writeText(roomPin);
+    }
+
+    const updateUsersRoom = (users) => {
+        setUsers(users)
+
+        console.log("update: ", users)
+
+    }
+
+    const updateUrl = (url) => {
+
+        console.log("chegou o link ", url)
+        setUrl(url)
+    }
+
+    const UpdateCurrentUser = () => {
+        if (currentUser?.username) {
+
+            for (const user of users) {
+                if (user.username === currentUser.username && user.admin !== currentUser.admin) {
+                    console.log(`current user ${currentUser.username} vai ser alterado`)
+                    setCurrentUser(user)
+                }
+            }
+        }
+    }
+
+    const updatePin = (newPin) => {
+        console.log("novo pin recebido", newPin)
+        setPin(newPin)
+    }
+
+    const forceLeave = (msg) => {
+        toast.error(msg)
+        console.log(msg)
+        navigate("/")
+    }
 
     //irá rodar apenas no primeiro render e requisitará algumas informaçoes do servidor
-    useEffect(() =>{
+    useEffect(() => {
         //user vai emitir para avisar que entrou e atualizar os membros da sala
-        socket.emit("userJoined")
-        socket.emit("firstTimeGetUrl", url, (response) =>{
-            console.log("url recebido ", response)
-            if(response.hasChange){
-                setUrl(response.url)
-            }
-            
-        })
-        
-        /*socket.on("firstRenderUpdateUser", (UsersInfo) =>{
-            UsersInfo.forEach( user => {
-                console.log("info: ", user)
-            });
-        })*/
+        firstTimeRender()
+
+
+
     }, [])
 
-    
-
     useEffect(() => {
-        if(socket){
-            socket.on('updateUrl', url => {
-                
-                console.log("chegou o link ", url)
-                setUrl(url)
-            })
-            
-            /*socket.on("userLeaveMsg", (msg) => {
-                console.log(msg)
-            })
+        UpdateCurrentUser()
 
-            socket.on("UserJoinMsg", msg => {
-                console.log(msg)
-            })*/
-            //setCount((count) => count+1)
-            //console.log(count)
-            
-            //antes estava no chat, mas coloquei aqui, provavelmente fique aqui
-            socket.on("updateUsersRoom", (users) => {
-                //console.log("usuario: ", msg)
-                setUsers(users)
-                console.log("update: ", users)
-            })
 
+    }, [users])
+
+    //irá rodar sempre que a variavel socket sofrer alguma alteração
+    useEffect(() => {
+
+        socket.on('updateUrl', updateUrl)
+
+        socket.on('updatePin', updatePin)
+
+        socket.on('forceLeave', forceLeave)
+
+        //usar isso aqui pra monitorar se o usuário se conectará após recarregar a pagina room
+        socket.on("connect", () => {
+            console.log(`socket ${socket.id} se conectou apartir da sala room, logo ele deve ser redirecionado para home`)
+
+            //alert(`socket id: ${socket.id} --- Usuário Não autorizado! clique "OK" para ser redirecionado para a HOMEPAGE`)
+            setAllowRender(false)
+
+        })
+
+
+        socket.on("updateUsersRoom", updateUsersRoom)
+
+        return () => {
+            socket.off("updateUsersRoom", updateUsersRoom)
+            socket.off('updateUrl', updateUrl)
+            socket.off('updatePin', updatePin)
+            socket.off('forceLeave', forceLeave)
         }
-    }, [socket])
-    
-    return (
-        <div className={styles.app}>
-            <header className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <Link onClick={() => leaveRoom()} to="/"><h1>TubeSync</h1> </Link>
-                </div>
-                <div className={styles.headerRight}>
-                    <button href="#" onClick={() => setSettings(!isSettings)}><img src={settings} alt="settings" /></button>
-                    <button href="#" onClick={()=> setIsModalOpen(!isModalOpen)}><img src={add} alt="add" /></button>
-                    <Modal id="modal" isShow={isModalOpen} setShow={()=>setIsModalOpen(!isModalOpen)}>
-                        <h2 className={styles.label}>Compartilhe o código:</h2>
-                        <div className={styles.copytxt}>
-                            <p className={styles.inputCopy}>{code}</p>
-                            <img className={styles.button} onClick={()=> {copyText()}} src={copy} alt="copy link"  />
-                        </div>
 
-                    </Modal>
-                </div>
-                <div className={`${styles.roomSettings} ${isSettings ? styles.hide : ""}`}>
-                    <ul>
-                        <li>
-                            <input className={styles.gap} type="checkbox" name="theater" checked={theaterMode} onChange={(e) => setTheaterMode(e.target.checked)} />
-                            <label for="theater">Theater Mode</label>
-                        </li>
-                        <li>
-                            <button onClick={() => changeTheme('light-mode')}>Light Mode</button>
-                        </li>
-                        <li>
-                            <button onClick={() => changeTheme('')}>Dark Mode</button>
-                        </li>
-                    </ul>
-                </div>
-            </header>
-            <div className={styles.body}>
-                <div className={styles.bodyLeft}>
-                    <div id='parentPlayer' className={theaterMode ? styles.videoTheater : styles.video}>
-                        <YoutubeReact  url={url}/>
+
+    }, [socket])
+
+    return (
+        <>{
+            !allowRender ? <Navigate to="/" /> : (
+                <div className={styles.app}>
+                    <header className={styles.header}>
+                        <div className={styles.headerLeft}>
+                            <Link onClick={() => leaveRoom()} to="/"> <h1>TubeSync</h1> </Link>
+                        </div>
+                        <div className={styles.headerRight}>
+                            <button href="#" onClick={() => setSettings(!isSettings)}><img src={settings} alt="settings" /></button>
+                            <button href="#" onClick={() => setIsModalOpen(!isModalOpen)}><img src={add} alt="add" /></button>
+                            <Modal id="modal" isShow={isModalOpen} setShow={() => setIsModalOpen(!isModalOpen)}>
+                                <h2 className={styles.label}>Código da sala:</h2>
+                                <div className={styles.copytxt}>
+                                    <p className={styles.inputCopy}>{code}</p>
+                                    <img className={styles.button} onClick={() => { copyRoomCode() }} src={copy} alt="copy link" />
+                                </div>
+                                <h2 className={styles.label}>Pin da sala:</h2>
+                                <div className={styles.copytxt}>
+                                    <p className={styles.inputCopy}>{pin}</p>
+                                    <img className={styles.button} onClick={() => { copyRoomPin() }} src={copy} alt="copy link" />
+                                </div>
+
+                            </Modal>
+                        </div>
+                        <div className={`${styles.roomSettings} ${isSettings ? styles.hide : ""}`}>
+                            <ul>
+                                <li>
+                                    <input className={styles.gap} type="checkbox" name="theater" checked={theaterMode} onChange={(e) => setTheaterMode(e.target.checked)} />
+                                    <label for="theater">Modo Teatro</label>
+                                </li>
+                                <li>
+                                    <button onClick={() => changeTheme('light-mode')}><img src={blue} /></button>
+                                </li>
+                                <li>
+                                    <button onClick={() => changeTheme('')}><img src={original} /></button>
+                                </li>
+                                <li>
+                                    <button onClick={() => changeTheme('red-mode')}><img src={red} /></button>
+                                </li>
+                                <li>
+                                    <button onClick={() => changeTheme('green-mode')}><img src={green} /></button>
+                                </li>
+                                <li>
+                                    <button onClick={() => changeTheme('yellow-mode')}><img src={yellow} /></button>
+                                </li>
+                            </ul>
+                        </div>
+                    </header >
+                    <div className={styles.body}>
+                        <div className={styles.bodyLeft}>
+                            <div id='parentPlayer' className={theaterMode ? styles.videoTheater : styles.video}>
+                                <YoutubeReact url={url} />
+                            </div>
+                            <form onSubmit={handleUrl} className={styles.search}>
+                                <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
+                                <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
+                            </form>
+                            <ul> 
+                                {!theaterMode && 
+                                <li onClick={ulChat}>Room Info</li>}
+                                <li onClick={ulInfo}>Chat</li>
+                            </ul>  
+                        </div>
+                        <div className={styles.bodyRight}>
+                            {!theaterMode &&
+                            <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} typeUser={currentUser?.admin}  theaterMode={theaterMode}/>}
+                            <ChatClient  theaterMode={theaterMode} />
+                        </div>
                     </div>
-                    <form onSubmit={handleUrl} className={styles.search}>
-                        <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
-                        <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
-                    </form>
-                    <ul> 
-                        {!theaterMode && 
-                        <li onClick={ulChat}>Room Info</li>}
-                        <li onClick={ulInfo}>Chat</li>
-                    </ul>                 
-                </div>
-                <div className={styles.bodyRight}>
-                    {!theaterMode && 
-                    <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} theaterMode={theaterMode} /> }
-                    <ChatClient theaterMode={theaterMode} />
-                </div>
-            </div>
-        </div>
+                </div >
+            )
+        } </>
+
     );
 }
 

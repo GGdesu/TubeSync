@@ -8,7 +8,10 @@ import * as yup from 'yup';
 export default function ModalCriarSala({ id, isShow, setShow}) {
     
     const validation = yup.object().shape({
-        username: yup.string().required('Campo obrigatório.'),
+        username: yup.string()
+            .required('Campo obrigatório.')
+            .min(2, 'O nome de usuário deve ter pelo menos 2 caracteres.')
+            .max(10, 'O nome de usuário não pode ter mais de 10 caracteres.')
     })
     
     const [username, setUsername] = useState('')
@@ -22,7 +25,7 @@ export default function ModalCriarSala({ id, isShow, setShow}) {
     const socket = useContext(SocketContext)
 
     const onChangeUsername = (e) => {
-        setUsername(e.target.value)
+        setUsername(e.target.value.replace(/[\W_]+/g, ''));
         setError(null)
     }
 
@@ -32,10 +35,13 @@ export default function ModalCriarSala({ id, isShow, setShow}) {
             await validation.validate({ username })
             let response = await socket.emitWithAck("createRoom", username)
             const code = response.roomID
+            const pin = response.pin
+            const user = {username: username, admin : true}
             console.log("codigo da sala: ", code)
+            console.log("pin da sala: ", pin)
             if (response.allow) {
                 navigate('/Room', {
-                    state: {code : code}
+                    state: {code : code, pin : pin, user : user}
                 })
             }
         } catch (err) {
