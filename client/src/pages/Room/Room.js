@@ -319,7 +319,7 @@ function Room() {
                         </div>
                         <div className={styles.bodyRight}>
                             {!theaterMode &&
-                            <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} typeUser={currentUser?.admin}  theaterMode={theaterMode}/>}
+                            <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} typeUser={currentUser?.admin} />}
                             <ChatClient  theaterMode={theaterMode} />
                         </div>
                     </div>

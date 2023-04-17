@@ -10,7 +10,7 @@ export default function Modal({id, isShow, setShow, children}){
     return(
       <div id={id} onClick={handleOutsideClick} className={styles.overlay}>
         <div className={styles.conteudo}>
-            <button onClick={setShow} className={styles.close}>X</button>
+            <button onClick={setShow} className={styles.close}>x</button>
             {/* <button onClick={setShow} className={styles.close}>X</button> */}
             {children}
         </div>

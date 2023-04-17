@@ -53,7 +53,7 @@ export default function ModalCriarSala({ id, isShow, setShow}) {
         return (
             <div id={id} onClick={handleOutsideClick} className={`${styles.overlay} ${styles.fadeIn}`}>
                 <div className={styles.conteudo}>
-                    <button onClick={setShow} className={styles.close}>X</button>
+                    <button onClick={setShow} className={styles.close}>x</button>
                     <form className={formStyles.formModal} onSubmit={criarSala}>
                         <h2 className={formStyles.titulo}>Criar Sala</h2>
                         <input onChange={onChangeUsername} id="nome" placeholder='Seu nome' autocomplete="off" className={formStyles.input}></input>

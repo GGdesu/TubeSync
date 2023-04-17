@@ -25,7 +25,7 @@ const Card = ({ nome, admin, typeUser }) => {
                 ) : (
 
                     <div className={styles.card}>
-                        {typeUser && <button onClick={() => kickRoom()} > X </button>}
+                        {typeUser && <button onClick={() => kickRoom()} > x </button>}
                         <div className={styles.avatar}><img src={avatar} alt="avatar" /></div>
                         <div className={styles.userNome}>{nome}</div>
                     </div>

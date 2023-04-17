@@ -435,29 +435,20 @@ input {
     position: fixed;
     top: 105px;
     left: 0;
-    width: 82vw;
+    width: calc(100vw - 350px );
     height: calc(80vw * 9 / 16);
   }
-  
-.roomInfoTheater {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    width: 82vw !important;
-    height: calc(25vh -105px) !important;
-}
-  
+
 .chatTheater {
     position: relative;
     right: 0 !important;
-    width: 18vw !important;
+    width: max(18vw, 350px)  !important;
+
     height: calc(100vh - 105px);
 
 }
 .chatBodyTheater {
     display: flex;
-    /* justify-content: center;
-    align-items: center; */
     color: #fff;
     overflow: auto;
     transition: all 0.4s ease-in-out;
@@ -466,37 +457,3 @@ input {
     padding-bottom: 10px;
     height: 100%;
 }
-
-/* 
-.button:active {
-    background:#809ce2;
-}
-.button.active:before {
-  content: "Copied";
-  display: block;
-  position: absolute;
-  top: -45px;
-  right: 0px;
-  background: #5c81dc;
-  padding: 8px 10px;
-  border-radius: 20px;
-  font-size: 15px;
-  display: none;
-}
-
-.button.:after {
-  content: "";
-  display: block;
-  position: absolute;
-  top: -20px;
-  right: 25px;
-  width: 10px;
-  height: 10px;
-  background: #5c81dc;
-  transform: rotate(45deg);
-  display: none;
-}
-.button.active:before,
-.button.active:after {
-    display:block;
-} */

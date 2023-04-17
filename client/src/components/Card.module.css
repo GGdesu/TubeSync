@@ -1,4 +1,5 @@
 .card{
+    position:relative;
     border-radius: 10px;
     border: 1.5px solid var(--membro);
     display: flex;
@@ -37,4 +38,10 @@
     width: 100px;
     height: 20px;
     background-color: var(--admin);
+}
+
+.card button{
+    position: absolute;
+    right: 6px;
+    font-size: 20px;
 }

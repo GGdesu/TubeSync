@@ -3,11 +3,11 @@ import styles from '../pages/Room/Room.module.css';
 import Card from './Card';
 
 
-function RoomInfo({isInfo, infoToggle, users, typeUser, theaterMode}) {
+function RoomInfo({isInfo, infoToggle, users, typeUser}) {
   const lista = users
   
   return ( 
-    <div id="info" className={`${styles.roomInfo} ${theaterMode ? styles.roomInfoTheater : ""}`}>
+    <div id="info" className={`${styles.roomInfo} `}>
       <div className={styles.infoHeader} onClick={infoToggle}>
         <h3>informação da sala</h3>
       </div>

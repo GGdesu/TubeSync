@@ -84,7 +84,7 @@ export default function ModalEntrarSala({ id, isShow, setShow }) {
     isShow && (
       <div id={id} onClick={handleOutsideClick} className={`${styles.overlay} ${styles.fadeIn}`}>
         <div className={styles.conteudo}>
-          <button onClick={setShow} className={styles.close}>X</button>
+          <button onClick={setShow} className={styles.close}>x</button>
           <form className={formStyles.formModal} onSubmit={entrarSala}>
             <h2 className={formStyles.titulo}>Entrar em uma Sala</h2>
             <input
