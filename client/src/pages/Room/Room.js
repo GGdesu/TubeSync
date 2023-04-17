@@ -17,6 +17,7 @@ function Room() {
     const [isInfo, setInfo] = useState("false")
     const [isSettings, setSettings] = useState("false")
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [theaterMode, setTheaterMode] = useState(false)
     const [url, setUrl] = useState("dQw4w9WgXcQ")
     const [inputYtUrl, setInputYtUrl] = useState()
     const [users, setUsers] = useState()
@@ -187,10 +188,10 @@ function Room() {
                 </div>
                 <div className={`${styles.roomSettings} ${isSettings ? styles.hide : ""}`}>
                     <ul>
-                        {/* <li>
-                            <input className={styles.gap} type="checkbox" name="theater"></input>
+                        <li>
+                            <input className={styles.gap} type="checkbox" name="theater" checked={theaterMode} onChange={(e) => setTheaterMode(e.target.checked)} />
                             <label for="theater">Theater Mode</label>
-                        </li> */}
+                        </li>
                         <li>
                             <button onClick={() => changeTheme('light-mode')}>Light Mode</button>
                         </li>
@@ -202,21 +203,23 @@ function Room() {
             </header>
             <div className={styles.body}>
                 <div className={styles.bodyLeft}>
-                    <div id='parentPlayer'  className={styles.video}>
+                    <div id='parentPlayer' className={theaterMode ? styles.videoTheater : styles.video}>
                         <YoutubeReact  url={url}/>
                     </div>
                     <form onSubmit={handleUrl} className={styles.search}>
                         <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
                         <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
                     </form>
-                    <ul>
-                        <li onClick={ulChat}>Room Info</li>
+                    <ul> 
+                        {!theaterMode && 
+                        <li onClick={ulChat}>Room Info</li>}
                         <li onClick={ulInfo}>Chat</li>
                     </ul>                 
                 </div>
                 <div className={styles.bodyRight}>
-                    <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users}/>
-                    <ChatClient/>
+                    {!theaterMode && 
+                    <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} theaterMode={theaterMode} /> }
+                    <ChatClient theaterMode={theaterMode} />
                 </div>
             </div>
         </div>

@@ -58,6 +58,7 @@ h1 {
     top: 105px;
     background-color: var(--roomSettings-bg);
     overflow: hidden;
+    z-index: 100;
 }
 
 .roomSettings li {
@@ -116,6 +117,7 @@ h1 {
     background-color: var(--rosaChoque);
     border: 1px solid #000;
 }
+
 
 .video {
     margin: 1rem 1rem 0 1rem;
@@ -176,7 +178,7 @@ input {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    margin-left: 1rem;
+    /* margin-left: 1rem; */
     bottom: 0;
     width: 50vw;
 }
@@ -421,6 +423,42 @@ input {
     .chatInput input {
         width: 70%;
     }
+}
+/*---------- theater-mode -------------*/
+.videoTheater {
+    position: fixed;
+    top: 105px;
+    left: 0;
+    width: 82vw;
+    height: calc(80vw * 9 / 16);
+  }
+  
+.roomInfoTheater {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 82vw !important;
+    height: calc(25vh -105px) !important;
+}
+  
+.chatTheater {
+    position: relative;
+    right: 0 !important;
+    width: 18vw !important;
+    height: calc(100vh - 105px);
+
+}
+.chatBodyTheater {
+    display: flex;
+    /* justify-content: center;
+    align-items: center; */
+    color: #fff;
+    overflow: auto;
+    transition: all 0.4s ease-in-out;
+    background-color: var(--chatBody-bg);
+    flex-direction: column;
+    padding-bottom: 10px;
+    height: 100%;
 }
 
 /* 

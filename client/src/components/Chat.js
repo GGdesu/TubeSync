@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { SocketContext } from '../context/Socket';
 
 
-function ChatClient() {
+function ChatClient({theaterMode}) {
 
     const socket = useContext(SocketContext)
 
@@ -77,12 +77,12 @@ function ChatClient() {
     }, [socket]);
 
     return (
-        <div className={styles.chat}>
+        <div id="chat" className={`${styles.chat} ${theaterMode ? styles.chatTheater : ""}`}>
             <div className={styles.chatHeader} onClick={handleToggle}>
                 <h3>Chat</h3>
                 <img src={menos} alt="close" />
             </div>
-            <div className={`${styles.chatBody} ${isActive ? styles.hide : ""}`}>
+            <div className={`${isActive ? styles.hide : ""} ${theaterMode ? styles.chatBodyTheater: styles.chatBody}` }>
                 {
                     messageList.map((message, index) => (
                         <>{
