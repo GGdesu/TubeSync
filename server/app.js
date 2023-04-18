@@ -1,8 +1,11 @@
 import express from "express"
 import { createServer } from "http"
 import { Server, Socket } from "socket.io"
-import { generateId } from "./utils/Util.js"
+
 //import { createRoom } from "./socketHandle/RoomHandler.js"
+import * as dotenv from 'dotenv'
+dotenv.config()
+
 import {
   createRoom,
   joinRoom,
@@ -20,8 +23,7 @@ import {
   kickUser
 } from "./socketHandler/SocketHandler.js"
 
-
-const PORT = process.env.PORT || 4001
+const PORT = process.env.API_PORT
 import router from "./routes/index.js"
 
 const app = express()
@@ -64,6 +66,18 @@ const roomNSP = io.of("/room");
 
   
 })
+
+if (process.env.NODE_ENV === "production") {
+  const path = require("path");
+  app.use(express.static(path.resolve(__dirname, 'client', 'build')));
+  app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'),function (err) {
+          if(err) {
+              res.status(500).send(err)
+          }
+      });
+  })
+}
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
