@@ -281,8 +281,10 @@ function Room() {
                         <div className={`${styles.roomSettings} ${isSettings ? styles.hide : ""}`}>
                             <ul>
                                 <li>
-                                    <input className={styles.gap} type="checkbox" name="theater" checked={theaterMode} onChange={(e) => setTheaterMode(e.target.checked)} />
-                                    <label for="theater">Modo Teatro</label>
+                                    <input className={styles.gap} type="checkbox" id="theater" name="theater" checked={theaterMode} onChange={(e) => setTheaterMode(e.target.checked)}/>
+                                    <label htmlFor="theater" onClick={() => setTheaterMode(theaterMode)} style={{ userSelect: 'none' }} >
+                                        Modo Teatro
+                                    </label>
                                 </li>
                                 <li>
                                     <button onClick={() => changeTheme('light-mode')}><img src={blue} /></button>
@@ -311,16 +313,16 @@ function Room() {
                                 <input required onChange={onChangeUrl} type="text" placeholder="Search / Youtube URL"></input>
                                 <button type="submit"><img src={pesquisar} alt="pesquisar" /></button>
                             </form>
-                            <ul> 
-                                {!theaterMode && 
-                                <li onClick={ulChat}>Room Info</li>}
+                            <ul>
+                                {!theaterMode &&
+                                    <li onClick={ulChat}>Room Info</li>}
                                 <li onClick={ulInfo}>Chat</li>
-                            </ul>  
+                            </ul>
                         </div>
                         <div className={styles.bodyRight}>
                             {!theaterMode &&
-                            <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} typeUser={currentUser?.admin} />}
-                            <ChatClient  theaterMode={theaterMode} />
+                                <RoomInfo isInfo={isInfo} infoToggle={infoToggle} users={users} typeUser={currentUser?.admin} />}
+                            <ChatClient theaterMode={theaterMode} />
                         </div>
                     </div>
                 </div >

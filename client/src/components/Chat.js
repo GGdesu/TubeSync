@@ -10,7 +10,7 @@ function ChatClient({theaterMode}) {
 
     const socket = useContext(SocketContext)
 
-    const [isActive, setActive] = useState("false");
+    const [isActive, setActive] = useState(true);
     const [messageList, setMessageList] = useState([]);
     const messageRef = useRef();
     const bottomRef = useRef();
@@ -25,6 +25,10 @@ function ChatClient({theaterMode}) {
             handleSubmit();
         }
     }
+    
+    useEffect(() => {
+        if (theaterMode) setActive(false)
+    }, [theaterMode])
 
     const handleSubmit = () => {
         const message = messageRef.current.value;
