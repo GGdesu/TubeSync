@@ -3,8 +3,6 @@ import { createServer } from "http"
 import { Server, Socket } from "socket.io"
 
 //import { createRoom } from "./socketHandle/RoomHandler.js"
-import * as dotenv from 'dotenv'
-dotenv.config()
 
 import {
   createRoom,
@@ -28,9 +26,6 @@ import router from "./routes/index.js"
 
 const app = express()
 app.use(router)
-// app.get("/", (req, res) => {
-//   res.send({ response: "I am Alive" }).status(200)
-// })
 
 const server = createServer(app)
 
