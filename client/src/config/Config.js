@@ -1,5 +1,5 @@
 
-const SOCKET_ENDPOINT = "http://localhost:4001/room"
+const SOCKET_ENDPOINT = "https://tube-sync.vercel.app/room"
 
 
 
