@@ -27,7 +27,10 @@ const PORT = process.env.API_PORT
 import router from "./routes/index.js"
 
 const app = express()
-app.use(router)
+//app.use(router)
+app.get("/", (req, res) => {
+  res.send({ response: "I am Alive" }).status(200)
+})
 
 const server = createServer(app)
 
@@ -42,12 +45,12 @@ const rooms = {}
 //SOCKET QUE IRA CUIDAR DA SINCRONIZACAO, CHAT E GERENCIAMENTOS DAS SALAS
 const roomNSP = io.of("/room");
 
-  roomNSP.on("connection", (socket) => {
+roomNSP.on("connection", (socket) => {
 
-    console.log(`client ${socket.id} connected`)
+  console.log(`client ${socket.id} connected`)
 
 
-    
+
   firstTimeGetUrl(socket, rooms)
   changeUrl(socket, roomNSP, rooms)
   playPauseSync(socket)
@@ -62,20 +65,20 @@ const roomNSP = io.of("/room");
   disconnecting(socket, roomNSP, rooms)
   disconnect(socket)
   kickUser(socket, roomNSP, rooms)
-  
 
-  
+
+
 })
 
 if (process.env.NODE_ENV === "production") {
   const path = require("path");
   app.use(express.static(path.resolve(__dirname, 'client', 'build')));
   app.get("*", (req, res) => {
-      res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'),function (err) {
-          if(err) {
-              res.status(500).send(err)
-          }
-      });
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'), function (err) {
+      if (err) {
+        res.status(500).send(err)
+      }
+    });
   })
 }
 
