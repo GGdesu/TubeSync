@@ -24,7 +24,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:4001",
+  "proxy": "https://tube-sync.vercel.app",
   "eslintConfig": {
     "extends": [
       "react-app",
