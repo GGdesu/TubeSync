@@ -27,10 +27,10 @@ const PORT = process.env.API_PORT
 import router from "./routes/index.js"
 
 const app = express()
-//app.use(router)
-app.get("/", (req, res) => {
-  res.send({ response: "I am Alive" }).status(200)
-})
+app.use(router)
+// app.get("/", (req, res) => {
+//   res.send({ response: "I am Alive" }).status(200)
+// })
 
 const server = createServer(app)
 
