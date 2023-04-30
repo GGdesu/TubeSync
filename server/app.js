@@ -21,7 +21,7 @@ import {
   kickUser
 } from "./socketHandler/SocketHandler.js"
 
-const PORT = process.env.API_PORT
+const PORT = process.env.PORT || 4001
 import router from "./routes/index.js"
 
 const app = express()
